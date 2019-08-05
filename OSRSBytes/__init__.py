@@ -46,7 +46,7 @@ class Hiscores(object):
 		keyed by the skill type. Example: self.stats['attack']
 		
 	Example Invocation:
-		from OSRS-Hiscores import Hiscores
+		from OSRSBytes import Hiscores
 		account = Hiscores('Zezima', 'N')
 		print(account.stats['attack']['level']) # displays attack level
 	"""
