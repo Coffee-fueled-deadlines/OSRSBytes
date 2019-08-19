@@ -253,9 +253,9 @@ class Items(object):
 
 	def __init__(self):
 		# Grand Exchange item lookup Initialization will go here
-		req = self.getHTTPRequest()
-		self.itemname = self.parseResponseByItemName(req)
-		self.itemid   = self.parseResponseByItemID(req)
+		req, buylims = self.getHTTPRequest()
+		self.itemname = self.parseResponseByItemName(req, buylims)
+		self.itemid   = self.parseResponseByItemID(req, buylims)
 		if not (self.itemname or self.itemid):
 			raise APIDown('The rsbuddy market API appears to be down')
 
@@ -271,11 +271,12 @@ class Items(object):
 		Returns:
 			string: API JSON Response in String format
 		"""
-		url = 'https://rsbuddy.com/exchange/summary.json'
-		return urllib.request.Request(url)
+		rsBuddyAPI = 'https://rsbuddy.com/exchange/summary.json'
+		githubItemInfo = 'https://raw.githubusercontent.com/Coffee-fueled-deadlines/OSRS-JSON-Item-Information/master/item_information.json'
+		return urllib.request.Request(rsBuddyAPI), urllib.request.Request(githubItemInfo)
 
 
-	def parseResponseByItemName(self, req):
+	def parseResponseByItemName(self, req, buylims):
 		"""parseResponseByItemName method
 
 		The parseResponseByItemName() method is responsible for accepting the
@@ -298,16 +299,26 @@ class Items(object):
 			parsedJSON =  json.loads(r.decode('utf-8'))
 		except:
 			return False
+		
+		r = urllib.request.urlopen(buylims).read()
+		try:
+			parsedBuyLims = json.loads(r.decode('utf-8'))
+		except:
+			return False
 
 		# Lets make this item-set not suck
 		itemDict = {}
 		for idval in parsedJSON:
 			itemDict[parsedJSON[idval]['name'].lower()] = parsedJSON[idval]
+			try:
+				itemDict[parsedJSON[idval]['name'].lower()]['buy_limit'] = parsedBuyLims[parsedJSON[idval]['name'].lower()]['buy_limit']
+			except:
+				pass
 
 		# Return the dictionary
 		return itemDict
 
-	def parseResponseByItemID(self, req):
+	def parseResponseByItemID(self, req, buylims):
 		"""parseResponseByItemID method
 
 		The parseResponseByItemID() method is responsible for accepting the
