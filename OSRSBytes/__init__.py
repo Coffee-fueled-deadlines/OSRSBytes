@@ -27,7 +27,7 @@ __status__ = 'Open'
 #  Exceptions  #
 ################
 class APIDown(Exception):
-	exit(0)
+	pass
 
 ############################
 #  START: Hiscores Object  #
