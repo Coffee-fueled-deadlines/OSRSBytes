@@ -40,16 +40,3 @@ print('Shop Price:',      items.getShopPrice('rune dagger'))
 print('High Alch Value:', items.getHighAlchValue('rune dagger'))
 print('Low Alch Value:',  items.getLowAlchValue('rune dagger'))
 ```
-
-### Methods
-`getSellAverage(ItemNameOrID)`
-
-The `getSellAverage()` method requires that the Item Name or the Item ID be provided as an argument (in `str`).  It returns the sell average of the item specified as an `int`.
-
-`getBuyAverage(ItemNameOrID)`
-
-the `getBuyAverage()` method requires that the Item Name or the Item ID be provided as an argument (in `str`).  It returns the buy average of the item specified as an `int`.
-
-`getSellQuantity(ItemNameOrID)`
-
-The `getSellQuantity()` method requires that the Item Name or the Item ID be provided as an argument (in `str`).  It returns the sell quantity (the current number of sell orders on the market) as an `int`.
