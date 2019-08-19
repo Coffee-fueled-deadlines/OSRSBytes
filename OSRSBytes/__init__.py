@@ -23,6 +23,12 @@ __maintainer__ = 'Markis Cook'
 __email__ = 'cookm0803@gmail.com'
 __status__ = 'Open'
 
+################
+#  Exceptions  #
+################
+class APIDown(Exception):
+	exit(0)
+
 ############################
 #  START: Hiscores Object  #
 ############################
@@ -222,51 +228,76 @@ class Hiscores(object):
 	##########################
 	#  END: Hiscores Object  #
 	##########################
-		
-########################
-#  START: Item Object  #
-########################
-class Item(object):
-	"""Item Object
-	
-	The Item Object will accept the Item Name or Item Id (or both) of an Item
-	and set relevent information on said item to include offensive and 
-	defensive bonuses as well as a link to a image of the item and a physical
-	descriptor to the Object's Attributes.
-	
-	Args:
-		itemName (str): The name of the item
-		itemID   (int): The item ID of the item
-		
-	Returns:
-		This Object returns nothing and instead sets the values of self.attributeHere
-	"""
-	def __init__(self):
-		# Item Initialization will go here
-		pass
-	######################
-	#  END: Item Object  #
-	######################
-	
+
 ############################
 #  START: Items Object     #
 ############################
 class Items(object):
+	"""Items Object
+
+	The Items Object accepts no arguments.  The Items object is, essentially, a collection
+	of two dictionaries on all OSRS Items.  The self.itemname dictionary is, as the name
+	implies, a dictionary of items with the item's name as it's key.  the self.itemid
+	dictionary, likewise, is a dictionary of items sorted by the item's id value.
+
+	While creating two separate dictionaries can take slightly longer, it allows for more
+	flexibility in development by giving developer's access to either method that they
+	prefer
+
+	Args:
+		None
+
+	Returns:
+		None
+	"""
 
 	def __init__(self):
 		# Grand Exchange item lookup Initialization will go here
 		req = self.getHTTPRequest()
 		self.itemname = self.parseResponseByItemName(req)
 		self.itemid   = self.parseResponseByItemID(req)
+		if not (self.itemname or self.itemid):
+			raise APIDown('The rsbuddy market API appears to be down')
 
 	def getHTTPRequest(self):
+		"""getHTTPRequest method
+
+		The getHTTPRequest method is responsible for establishing a request
+		with the rsbuddy API.
+
+		Args:
+			None
+
+		Returns:
+			string: API JSON Response in String format
+		"""
 		url = 'https://rsbuddy.com/exchange/summary.json'
 		return urllib.request.Request(url)
 
 
 	def parseResponseByItemName(self, req):
+		"""parseResponseByItemName method
+
+		The parseResponseByItemName() method is responsible for accepting the
+		request esablished by the getHTTPRequest() method and loading it into
+		the JSON string parser to convert it to a usable python dictionary.
+
+		Once parsed, the dictionary is iterated through and a new dictionary is
+		created with identical information except the key value is replaced with
+		the item name instead of the item id.
+
+		Args:
+			req: The string request received by the getHTTPRequest() method
+
+		Returns:
+			itemDict: A dictionary of OSRS Items keyed with item names
+			boolval: Returns false on parse error
+		"""
 		r = urllib.request.urlopen(req).read()
-		parsedJSON =  json.loads(r.decode('utf-8'))
+		try:
+			parsedJSON =  json.loads(r.decode('utf-8'))
+		except:
+			return False
 
 		# Lets make this item-set not suck
 		itemDict = {}
@@ -277,8 +308,25 @@ class Items(object):
 		return itemDict
 
 	def parseResponseByItemID(self, req):
+		"""parseResponseByItemID method
+
+		The parseResponseByItemID() method is responsible for accepting the
+		request established by the getHTTPRequest() method and loading it into
+		the JSON string parser to convert it to a usable python dictionary keyed
+		with the item ID's of the items.
+
+		Args:
+			req: The string request received by the getHTTPRequest() method
+
+		Returns:
+			itemDict: dictionary of OSRS Items keyed by item ids
+			boolval: Returns false on failure to parse
+		"""
 		r = urllib.request.urlopen(req).read()
-		return json.loads(r.decode('utf-8'))
+		try:
+			return json.loads(r.decode('utf-8'))
+		except:
+			return False
 
 	def getItem(self, itemNameOrID: str):
 		try:
