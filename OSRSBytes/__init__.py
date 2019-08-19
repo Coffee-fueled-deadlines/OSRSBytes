@@ -4,18 +4,20 @@
 """
 OSRSBytes() is an all-in-one Python library for Old School Runescape (OSRS) that features Item Information Lookup, Hiscores, and Market information.
 
-{License_info}
+EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)
 """
 
 # Built-in/Generic Imports
 import http.client
+import json
 import math
+import urllib.request
 from sys import exit
 
 __author__ = 'Markis Cook'
 __copyright__ = 'Copyright 2019, Markis H. Cook'
 __credits__ = ['Markis Cook (Lead Programmer, Creator)']
-__license__ = '{license}'
+__license__ = 'EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)'
 __version__ = '1.0.0.0'
 __maintainer__ = 'Markis Cook'
 __email__ = 'cookm0803@gmail.com'
@@ -46,7 +48,7 @@ class Hiscores(object):
 		keyed by the skill type. Example: self.stats['attack']
 		
 	Example Invocation:
-		from OSRSBytes import Hiscores
+		from OSRS-Hiscores import Hiscores
 		account = Hiscores('Zezima', 'N')
 		print(account.stats['attack']['level']) # displays attack level
 	"""
@@ -247,23 +249,90 @@ class Item(object):
 	######################
 	
 ############################
-#  START: GELookup Object  #
+#  START: Items Object     #
 ############################
-class GELookup(object):
+class Items(object):
 
 	def __init__(self):
 		# Grand Exchange item lookup Initialization will go here
-		pass
+		req = self.getHTTPRequest()
+		self.itemname = self.parseResponseByItemName(req)
+		self.itemid   = self.parseResponseByItemID(req)
+
+	def getHTTPRequest(self):
+		url = 'https://rsbuddy.com/exchange/summary.json'
+		return urllib.request.Request(url)
+
+
+	def parseResponseByItemName(self, req):
+		r = urllib.request.urlopen(req).read()
+		parsedJSON =  json.loads(r.decode('utf-8'))
+
+		# Lets make this item-set not suck
+		itemDict = {}
+		for idval in parsedJSON:
+			itemDict[parsedJSON[idval]['name'].lower()] = parsedJSON[idval]
+
+		# Return the dictionary
+		return itemDict
+
+	def parseResponseByItemID(self, req):
+		r = urllib.request.urlopen(req).read()
+		return json.loads(r.decode('utf-8'))
+
+	def getItem(self, itemNameOrID: str):
+		try:
+			return self.itemname[itemNameOrID.lower()]
+		except KeyError:
+			return self.itemid[itemNameOrID.lower()]
+
+	def getBuyAverage(self, itemNameOrID: str):
+		try:
+			return self.itemname[itemNameOrID.lower()]['buy_average']
+		except KeyError:
+			return self.itemid[itemNameOrID.lower()]['buy_average']
+
+	def getSellAverage(self, itemNameOrID: str):
+		try:
+			return self.itemname[itemNameOrID.lower()]['sell_average']
+		except KeyError:
+			return self.itemid[itemNameOrID.lower()]['sell_average']
+
+	def getBuyQuantity(self, itemNameOrID: str):
+		try:
+			return self.itemname[itemNameOrID.lower()]['buy_quantity']
+		except KeyError:
+			return self.itemid[itemNameOrID.lower()]['buy_quantity']
+
+	def getSellQuantity(self, itemNameOrID: str):
+		try:
+			return self.itemname[itemNameOrID.lower()]['sell_quantity']
+		except KeyError:
+			return self.itemid[itemNameOrID.lower()]['sell_quantity']
+
+	def getShopPrice(self, itemNameOrID: str):
+		try:
+			return self.itemname[itemNameOrID.lower()]['sp']
+		except KeyError:
+			return self.itemid[itemNameOrID.lower()]['sp']
+
+	def getLowAlchValue(self, itemNameOrID: str):
+		try:
+			return math.ceil(self.itemname[itemNameOrID.lower()]['sp']*.40)
+		except KeyError:
+			return math.ceil(self.itemid[itemNameOrID.lower()]['sp']*.40)
+
+	def getHighAlchValue(self, itemNameOrID: str):
+		try:
+			return math.ceil(self.itemname[itemNameOrID.lower()]['sp']*.60)
+		except KeyError:
+			return math.ceil(self.itemid[itemNameOrID.lower()]['sp']*.60)
+
+	def isMembers(self, itemNameOrID: str):
+		try:
+			return bool(self.itemname[itemNameOrID.lower()]['members'])
+		except KeyError:
+			return bool(self.itemid[itemNameOrID.lower()]['members'])
 	##########################
-	#  END: GELookup Object  #
+	#  END: Items Object     #
 	##########################
-
-
-
-
-
-
-
-
-
-
