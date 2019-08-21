@@ -335,9 +335,24 @@ class Items(object):
 		"""
 		r = urllib.request.urlopen(req).read()
 		try:
-			return json.loads(r.decode('utf-8'))
+			parsedJSON = json.loads(r.decode('utf-8'))
 		except:
 			return False
+		
+		r = urllib.request.urlopen(buylims).read()
+		try:
+			parsedBuyLims = json.loads(r.decode('utf-8'))
+		except:
+			return False
+		
+		for idval in parsedJSON:
+			try:
+				if parsedJSON[idval]['name'].lower() == parsedBuyLims[parsedJSON[idval]['name'].lower()]['item_name']:
+					parsedJSON[idval]['buy_limit'] = parsedBuyLims[parsedJSON[idval]['name'].lower()]['buy_limit']
+			except:
+				pass
+			
+		return parsedJSON
 
 	def getItem(self, itemNameOrID: str):
 		try:
@@ -368,6 +383,14 @@ class Items(object):
 			return self.itemname[itemNameOrID.lower()]['sell_quantity']
 		except KeyError:
 			return self.itemid[itemNameOrID.lower()]['sell_quantity']
+		
+	def getBuyLimit(self, itemNameOrID: str):
+		try:
+			return self.itemname[itemNameOrID.lower()]['buy_limit']
+		except KeyError:
+			return self.itemid[itemNameOrID.lower()]['buy_limit']
+		except:
+			return False
 
 	def getShopPrice(self, itemNameOrID: str):
 		try:
