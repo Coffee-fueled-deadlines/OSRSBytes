@@ -25,10 +25,7 @@ from OSRSBytes import Items
 items = Items()
 
 # Lets get information on this item
-if items.isMembers('rune dagger'):
-    print('Members Item: True'
-else:
-    print('Members Item: False')
+print('Is Members:',    items.isMembers('rune dagger'))
     
 print('Sell Average:',  items.getSellAverage('rune dagger'))
 print('Sell Quantity:', items.getSellQuantity('rune dagger'))
