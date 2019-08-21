@@ -359,6 +359,12 @@ class Items(object):
 			return self.itemname[itemNameOrID.lower()]
 		except KeyError:
 			return self.itemid[itemNameOrID.lower()]
+		
+	def getName(self, itemNameOrID: str):
+		try:
+			return self.itemname[itemNameOrID.lower()]['name']
+		except KeyError:
+			return self.itemid[itemNameOrID.lower()]['name']
 
 	def getBuyAverage(self, itemNameOrID: str):
 		try:
