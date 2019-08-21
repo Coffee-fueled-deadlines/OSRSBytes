@@ -29,6 +29,15 @@ __status__ = 'Open'
 class APIDown(Exception):
 	pass
 
+class DoNotRunDirectly(Exception):
+	pass
+
+############################
+#  Do not run if __main__  #
+############################
+if __name__ == "__main__":
+	raise DoNotRunDirectly("This library is not meant to be called as __main__, import it instead.")
+
 ############################
 #  START: Hiscores Object  #
 ############################
