@@ -5,6 +5,11 @@
 
 OSRSBytes is an all-in-one Python library for Old School Runescape (OSRS) that features Item Information Lookup, Hiscores, and Market information from RSBuddy.
 
+### Installation:
+```
+pip install OSRSBytes
+```
+
 ### Example Invocation (Hiscores)
 ```python
 from OSRSBytes import Hiscores
