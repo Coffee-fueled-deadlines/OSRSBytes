@@ -69,7 +69,7 @@ class Hiscores(object):
 	"""
 	def __init__(self, username: str, actype='N'):
 		self.username = username
-		self.accountType = actype
+		self.accountType = actype.upper()
 		self.getHTTPResponse()
 
 	def getHTTPResponse(self):
