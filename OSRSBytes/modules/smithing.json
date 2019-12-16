@@ -1,1 +1,134 @@
-
+{
+	"bronze" : {
+		"bar" : {
+			"name" : "bronze bar",
+			"amount" : 1,
+			"requires" : {
+				"bar_amount" : 0,
+				"level" : 1,
+				"copper ore" : 2,
+				"tin ore" : 2
+			}
+		},
+		"dagger" : {
+			"name" : "bronze dagger",
+			"amount" : 1,
+			"requires" : {
+				"bar_amount" : 1,
+				"level" : 1
+			}
+		},
+		"axe" : {
+			"name" : "bronze axe",
+			"amount" : 1,
+			"requires" : {
+				"bar_amount" : 1,
+				"level" : 1
+			}
+		},
+		"mace" : {
+			"name" : "bronze mace",
+			"amount" : 1,
+			"requires" : {
+				"bar_amount" : 1,
+				"level" : 2
+			}
+		},
+		"medium helm" : {
+			"name" : "bronze med helm",
+			"amount" : 1,
+			"requires" : {
+				"bar_amount" : 1,
+				"level" : 3
+			}
+		},
+		"bolts" : {
+			"name" : "bronze bolts (unf)",
+			"amount" : 10,
+			"requires" : {
+				"bar_amount" : 1,
+				"level" : 3
+			}
+		},
+		"wire" : {
+			"name" : "bronze wire",
+			"amount" : 1,
+			"requires" : {
+				"bar_amount" : 1,
+				"level" : 4
+			}
+		},
+		"sword" : {
+			"name" : "bronze sword",
+			"amount" : 1,
+			"requires" : {
+				"bar_amount" : 1,
+				"level" : 4
+			}
+		},
+		"dart tip" : {
+			"name" : "bronze dart tip",
+			"amount" : 10,
+			"requires" : {
+				"bar_amount" : 1,
+				"level" : 4
+			}
+		},
+		"nails" : {
+			"name" : "bronze nails",
+			"amount" : 15,
+			"requires" : {
+				"bar_amount" : 1,
+				"level" : 4
+			}
+		},
+		"arrowtips" : {
+			"name" : "bronze arrowtips",
+			"amount" : 15,
+			"requires" : {
+				"bar_amount" : 1,
+				"level" : 5
+			}
+		},
+		"scimitar" : {
+			"name" : "bronze scimitar",
+			"amount" : 1,
+			"requires" : {
+				"bar_amount" : 2,
+				"level" : 5
+			}
+		},
+	},
+	"iron" : {
+		"bar" : {
+			"name" : "iron bar",
+			"requires" : {
+				"iron ore" : 1
+			}
+		},
+		"dagger" : {
+			"name" : "iron dagger",
+			"requires" : {
+				"bar_amount" : 1	
+			}
+		},
+		"axe" : {
+			"name" : "iron axe",
+			"requires" : {
+				"bar_amount" : 1	
+			}
+		}
+	},
+	"steel" : {
+		
+	},
+	"mithril" : {
+		
+	},
+	"adamant" : {
+		
+	},
+	"rune" : {
+		
+	}
+}
