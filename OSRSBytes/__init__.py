@@ -11,6 +11,7 @@ EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENS
 import http.client
 import json
 import math
+import os
 import urllib.request
 from sys import exit
 
@@ -22,6 +23,9 @@ __version__ = '1.0.0.0'
 __maintainer__ = 'Markis Cook'
 __email__ = 'cookm0803@gmail.com'
 __status__ = 'Open'
+
+# Location of OSRSBytes directory
+__here__ = os.path.dirname(os.path.realpath(__file__))
 
 ################
 #  Exceptions  #
