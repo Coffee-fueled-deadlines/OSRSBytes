@@ -47,3 +47,13 @@ print('Low Alch Value:',  items.getLowAlchValue('rune dagger'))
 print('Item Name:',       items.getName('1213'))
 print('Sell Average:',    items.getSellAverage('1213'))
 ```
+
+### Contributing
+
+Prior to contributing, please consider the following before committing code:
+
+1. Do not leave commented lines in code (i.e. `#print('test')`
+1. Try to write your code as cleanly and readable as possible
+1. Whenever possible, do not use third party packages, try your hardest to utilize built-in python packages
+
+Thank you for your considerations
