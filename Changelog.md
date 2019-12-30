@@ -3,7 +3,7 @@
 
 ### V. 1.1.0
 > 
-> Reworked the way OSRSBytes is constructed.  Previously it all initialized through `OSRSBytes/__init__.py` but that was confusing and not > easily scalable (in my opinion).  I've instead reworked the `__init__.py` to instead call sub-modules (namely `Hiscores.py`, `Items.py`, > and `Utilities.py`).  
+> Reworked the way OSRSBytes is constructed.  Previously it all initialized through `OSRSBytes/__init__.py` but that was confusing and not > easily scalable (in my opinion).  I've instead reworked the `__init__.py` to instead call sub-modules (namely `Hiscores.py`, `Items.py`,  and `Utilities.py`).  
 > 
 > The goal of this rework was to make it easier to edit modules without breaking other modules in the process during development and to > > ensure that functionality (specifically calling of the package) was identical.  Both of these goals where achieved.  Upon upgrading your > repo to the newest version, you should find that calling OSRSBytes is the same as it was previously.
 > 
