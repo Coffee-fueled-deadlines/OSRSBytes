@@ -1,4 +1,4 @@
-# OSRSBytes (v1.1.0.0)
+# OSRSBytes (v1.1.0)
 
 ## Introduction
 
