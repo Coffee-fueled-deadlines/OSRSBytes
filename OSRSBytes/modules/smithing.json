@@ -1,8 +1,10 @@
 {
 	"bronze" : {
+		"multiplier" : 12.5,
 		"bar" : {
 			"name" : "bronze bar",
 			"amount" : 1,
+			"exp" : 6.2,
 			"requires" : {
 				"bar_amount" : 0,
 				"level" : 1,
@@ -100,8 +102,10 @@
 		},
 	},
 	"iron" : {
+		"multiplier" : 25,
 		"bar" : {
 			"name" : "iron bar",
+			"exp" : 12.5,
 			"requires" : {
 				"iron ore" : 1
 			}
@@ -120,9 +124,26 @@
 		}
 	},
 	"steel" : {
-		
+		"multiplier" : 37.5,
+		"bar" : {
+			"name" : "steel bar",
+			"exp" : 17.5,
+			"requires" : {
+				"iron ore" : 1,
+				"coal" : 2
+			}
+		}
 	},
 	"mithril" : {
+		"multiplier" : 50,
+		"bar" : {
+			"name" : "mithril bar",
+			"exp" : 30,
+			"requires" : {
+				"mithril ore" : 1,
+				"coal" : 4
+			}
+		}
 		
 	},
 	"adamant" : {
