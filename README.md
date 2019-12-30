@@ -1,5 +1,4 @@
-# OSRSBytes
-
+# OSRSBytes (v1.1.0.0)
 
 ## Introduction
 
@@ -8,6 +7,11 @@ OSRSBytes is an all-in-one Python library for Old School Runescape (OSRS) that f
 ### Installation:
 ```
 pip install OSRSBytes
+```
+
+### Upgrade
+```
+pip install OSRSBytes --upgrade
 ```
 
 ### Example Invocation (Hiscores)
@@ -25,19 +29,21 @@ print("Exp remaining:", user.skill('attack','exp_to_next_level'))
 
 ### Example Invocation (Items)
 ```python
+
 from OSRSBytes import Items
 
 items = Items()
 
 # Lets get information on this item
 print('Is Members:',    items.isMembers('rune dagger'))
+print("Item ID:",         items.getItemID('rune dagger'))
     
 print('Sell Average:',  items.getSellAverage('rune dagger'))
 print('Sell Quantity:', items.getSellQuantity('rune dagger'))
 
 print('Buy Average:',  items.getBuyAverage('rune dagger'))
 print('Buy Quantity:', items.getBuyQuantity('rune dagger'))
-print('Buy Limit:',    items.getBuyLimit('rune dagger'))
+print('Buy Limit:',    items.getBuyLimit('fire rune'))
 
 print('Shop Price:',      items.getShopPrice('rune dagger'))
 print('High Alch Value:', items.getHighAlchValue('rune dagger'))
@@ -47,13 +53,3 @@ print('Low Alch Value:',  items.getLowAlchValue('rune dagger'))
 print('Item Name:',       items.getName('1213'))
 print('Sell Average:',    items.getSellAverage('1213'))
 ```
-
-### Contributing
-
-Prior to contributing, please consider the following before committing code:
-
-1. Do not leave commented lines in code (i.e. `#print('test')`
-1. Try to write your code as cleanly and readable as possible
-1. Whenever possible, do not use third party packages, try your hardest to utilize built-in python packages
-
-Thank you for your considerations
