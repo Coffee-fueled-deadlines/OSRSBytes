@@ -1,63 +1,63 @@
 # OSRSBytes (v1.2.0)
 
 ## Introduction
-
-OSRSBytes is an all-in-one Python library for Old School Runescape (OSRS) that features Item Information Lookup, Hiscores, and Market information from RSBuddy.
-
+> 
+> OSRSBytes is an all-in-one Python library for Old School Runescape (OSRS) that features Item Information Lookup, Hiscores, and Market information from RSBuddy.
+ 
 ### Installation:
-```
-pip install OSRSBytes
-```
+> ```cmd
+> pip install OSRSBytes
+> ```
 
 ### Upgrade
-```
-pip install OSRSBytes --upgrade
-```
+> ```cmd
+> pip install OSRSBytes --upgrade
+> ```
 
 ### Example Invocation (Hiscores)
-The OSRSBytes v1.2.0 library contains caching on Hiscores to improve performance.  Caching is disabled by default and must be enabled when initializing the hiscores object.  Note that default TTL of cache is `3600` seconds or `1` hour.
-
-Example without Caching
-```python
-######################
-# No Caching Example #
-######################
-from OSRSBytes import Hiscores
-
-user = Hiscores('Zezima')
-
-# Lets display some information
-print("Current level:", user.skill('attack', 'level'))
-print("Current rank:", user.skill('attack', 'rank'))
-print("Current exp:", user.skill('attack', 'experience'))
-print("Exp remaining:", user.skill('attack','exp_to_next_level'))
-```
-
-Example utilizing Caching
-```python
-###################
-# Caching Example #
-###################
-from OSRSBytes import Hiscores
-
-user = Hiscores('zezima', caching=True)
- 
- # Lets display some information
-print("Current level:", user.skill('attack', 'level'))
-print("Current rank:", user.skill('attack', 'rank'))
-print("Current exp:", user.skill('attack', 'experience'))
-print("Exp remaining:", user.skill('attack','exp_to_next_level'))
-
-# Reinitializing the Hiscores class is quick now, as we already have the information cached
-user = Hiscores('zezima', caching=True)
-print("Current level:", user.skill('attack', 'level'))
-print("Current rank:", user.skill('attack', 'rank'))
-print("Current exp:", user.skill('attack', 'experience'))
-print("Exp remaining:", user.skill('attack','exp_to_next_level'))
-
-# Lets get the current time left in the cache (in seconds) for Zezima
-print("TTL for Cache: ", user.getCacheTTLRemaining()) # rounded up to nearest second
-```
+> The OSRSBytes v1.2.0 library contains caching on Hiscores to improve performance.  Caching is disabled by default and must be enabled when initializing the hiscores object.  Note that default TTL of cache is `3600` seconds or `1` hour.
+> 
+> Example without Caching
+> ```python
+> ######################
+> # No Caching Example #
+> ######################
+> from OSRSBytes import Hiscores
+> 
+> user = Hiscores('Zezima')
+> 
+> # Lets display some information
+> print("Current level:", user.skill('attack', 'level'))
+> print("Current rank:", user.skill('attack', 'rank'))
+> print("Current exp:", user.skill('attack', 'experience'))
+> print("Exp remaining:", user.skill('attack','exp_to_next_level'))
+> ```
+> 
+> Example utilizing Caching
+> ```python
+> ###################
+> # Caching Example #
+> ###################
+> from OSRSBytes import Hiscores
+> 
+> user = Hiscores('zezima', caching=True)
+>  
+> # Lets display some information
+> print("Current level:", user.skill('attack', 'level'))
+> print("Current rank:", user.skill('attack', 'rank'))
+> print("Current exp:", user.skill('attack', 'experience'))
+> print("Exp remaining:", user.skill('attack','exp_to_next_level'))
+> 
+> # Reinitializing the Hiscores class is quick now, as we already have the information cached
+> user = Hiscores('zezima', caching=True)
+> print("Current level:", user.skill('attack', 'level'))
+> print("Current rank:", user.skill('attack', 'rank'))
+> print("Current exp:", user.skill('attack', 'experience'))
+> print("Exp remaining:", user.skill('attack','exp_to_next_level'))
+> 
+> # Lets get the current time left in the cache (in seconds) for Zezima
+> print("TTL for Cache: ", user.getCacheTTLRemaining()) # rounded up to nearest second
+> ```
 
 ### Example Invocation (HiscoresCache)
 The OSRSBytes v1.2.0 library allows for you to directly manage the HiscoresCache independant of the Hiscores module.
