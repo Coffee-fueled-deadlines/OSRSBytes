@@ -11,7 +11,7 @@ Changes that involve modifications to player based information should go in the 
 
 Note: This Module utilizes the secure.runescape.com api and response time is VERY slow sometimes.  I recommend using
 the OSRSBytes' built in caching method (check the ReadMe on Github) or homebrew your own caching method into whatever
-script you're creating.  It's possible that repetive, fast calls to the API with the same username may result in
+script you're creating.  It's possible that repetetive, rapid calls to the API with the same username may result in
 throttling or IP Banning the script that's making these API Calls.  Caching is highly recommended regardless.
 """
 
