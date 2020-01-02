@@ -9,22 +9,28 @@ EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENS
 Hiscores Module is responsible for fetching and parsing player skill levels and scores from the OSRS API.
 Changes that involve modifications to player based information should go in the Hiscores Module.
 
-Note that this Module utilizes the secure.runescape.com api and is VERY slow sometimes.  I recommend using
-a form of cacheing if you intend to utilize this in an application that'll serve multiple users checking for
-updates frequently.
+Note: This Module utilizes the secure.runescape.com api and response time is VERY slow sometimes.  I recommend using
+the OSRSBytes' built in caching method (check the ReadMe on Github) or homebrew your own caching method into whatever
+script you're creating.  It's possible that repetive, fast calls to the API with the same username may result in
+throttling or IP Banning the script that's making these API Calls.  Caching is highly recommended regardless.
 """
 
 # Generic/Built-in Imports
 import http.client
 import math
+import os
 from sys import exit
+import shelve
+import time
+
+from OSRSBytes.Utilities import Utilities
 
 # META Data
 __author__     = 'Markis Cook'
 __copyright__  = 'Copyright 2019, Markis H. Cook'
 __credits__    = ['Markis Cook (Lead Programmer, Creator)']
 __license__    = 'EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)'
-__version__    = '1.1.0'
+__version__    = '1.2.0'
 __maintainer__ = 'Markis Cook'
 __email__      = 'cookm0803@gmail.com'
 __status__     = 'Open'
@@ -75,10 +81,97 @@ class Hiscores(object):
 		account = Hiscores('Zezima', 'N')
 		print(account.stats['attack']['level']) # displays attack level
 	"""
-	def __init__(self, username: str, actype='N'):
-		self.username = username
+	def __init__(self, username: str, actype='N', caching: bool=False, cacheTTL: int=3600, force_cache_update: bool=False):
+		self.username = username.lower()
 		self.accountType = actype.upper()
-		self._getHTTPResponse()
+
+		# Set caching variable
+		self.caching = caching
+
+		# Store TTL for Cache in seconds
+		self.cacheTTL = cacheTTL
+
+		# Check if caching
+		if self.caching and not force_cache_update:
+			# Check if cache needs to be updated
+			if self._checkCache():
+				# Cache is expired, continue with Connection
+				self._getHTTPResponse()
+			else:
+				self._fetchCacheAndSetStats()
+		elif self.caching and force_cache_update:
+			self._getHTTPResponse()
+		else:
+			# Caching disabled, continue with Connection
+			self._getHTTPResponse()
+		
+	def _checkCache(self):
+		"""_checkCache Method
+
+		The _checkCache method is used by the class to determine whether or not the HiscoresCache needs to be
+		updated for the user specified in object initialization.  On returning True, cache is updated.  On 
+		returning False, cache is not updated.
+		"""
+		if os.path.exists( Utilities().__package_dir__ + "/cache/hiscores.shelve.dat" ):
+			tempSkills = shelve.open( Utilities().__package_dir__ + "/cache/hiscores.shelve" )
+			try:
+				tempSkills[self.username]
+				if tempSkills[self.username]['cache_ttl'] > time.time():
+					# If cache_ttl is greater than current timestamp, cache is still valid
+					return False
+				else:
+					# If cache_ttl is less than or equal to current timestamp, cache is expired
+					return True
+
+			except KeyError:
+				# Username is not present in cache, user needs to be cached
+				return True
+
+			finally:
+				# Close the shelve
+				tempSkills.close()
+
+		# If cache hasn't been built yet, cache needs to be updated
+		return True
+
+	def _cacheData(self):
+		"""_cacheData Method
+
+		The _cacheData method is used by the class to create/update the cache with the Hiscores information
+		retrieved on the specific user.  Cache is stored by username in one file.  This means that the HiscoresCache
+		file will contain Cache on ALL users queried ever.
+		"""
+		if not os.path.exists( Utilities().__package_dir__ + "/cache/"):
+			os.mkdir( Utilities().__package_dir__ + "/cache/")
+		try:
+			HiscoresCache = shelve.open( Utilities().__package_dir__ + "/cache/hiscores.shelve" )
+			HiscoresCache.update(self.stats)
+
+		except Exception as e:
+			raise Exception(e)
+
+		finally:
+			HiscoresCache.close()
+
+	def _fetchCacheAndSetStats(self):
+		try:
+			HiscoresCache = shelve.open( Utilities().__package_dir__ + "/cache/hiscores.shelve" )
+			self.stats = dict(HiscoresCache)
+
+		except Exception as e:
+			raise Exception(e)
+
+		finally:
+			HiscoresCache.close()
+
+	def getCacheTTLRemaining(self):
+		try:
+			HiscoresCache = shelve.open( Utilities().__package_dir__ + "/cache/hiscores.shelve" )
+			return math.ceil(HiscoresCache[self.username]['cache_ttl'] - time.time())
+		except Exception as e:
+			return Exception(e)
+		finally:
+			HiscoresCache.close()
 
 	def _getHTTPResponse(self):
 		"""getHTTPResponse() method
@@ -171,7 +264,7 @@ class Hiscores(object):
 		subset['total']    = info
 
 		skills = [
-			  'attack',
+			  	'attack',
 		          'defense',
 		          'strength',
 		          'hitpoints',
@@ -208,7 +301,14 @@ class Hiscores(object):
 			counter += 3
 
 		# set stats dictionary
-		self.stats = subset
+		self.stats = {}
+		self.stats[self.username] = subset
+		self.stats[self.username]['cache_ttl'] = time.time() + self.cacheTTL
+		
+		# Check for caching
+		if self.caching:
+			self._cacheData()
+
 
 	def skill(self, skill, stype: str = 'level'):
 		"""skill() method
@@ -234,7 +334,7 @@ class Hiscores(object):
 				print("stype must be 'rank','level', or experience'")
 				exit(0)
 			else:
-				return self.stats[skill.lower()][stype.lower()]
+				return self.stats[self.username][skill.lower()][stype.lower()]
 		except KeyError as KE:
 			print("ERROR: skill {} does not exist".format(KE))
 			exit(0)
@@ -245,3 +345,71 @@ class Hiscores(object):
 	##########################
 	#  END: Hiscores Object  #
 	##########################
+
+class HiscoresCache(object):
+	def __init__(self):
+		self.HiscoresCacheFilePath = Utilities().__package_dir__ + "/cache/hiscores.shelve"
+
+	def destroyCache(self):
+		"""destroyCache Method
+
+		The destroyCache method completely destroys the HiscoresCache files including the directory in which
+		these files are located.
+
+		This is not reversible.
+		"""
+		try:
+			os.remove( self.HiscoresCacheFilePath + ".dat" )
+			os.remove( self.HiscoresCacheFilePath + ".bak" )
+			os.remove( self.HiscoresCacheFilePath + ".dir" )
+
+		except Exception as e:
+			raise Exception(e)
+
+		finally:
+			os.rmdir( Utilities().__package_dir__ + "/cache/" )
+
+	def clearExpiredCacheEntries(self):
+		"""clearExpiredCacheEntries Method
+
+		The clearExpiredCacheEntries method checks the HiscoresCache entries to see if any cache_ttl have reached
+		their expiration time and then removes that user from the cache.
+
+		After calling this method, one can utilize the self.usersDeleted and self.purgeCounter properties to check
+		the number of users removed as well as the users removed.  Calling this method again clears both of those
+		properties.
+		"""
+		try:
+			HiscoresCache = shelve.open(self.HiscoresCacheFilePath)
+			self.purgeCounter = 0
+			self.usersDeleted = []
+			for username in HiscoresCache:
+				if HiscoresCache[username]['cache_ttl'] <= time.time():
+					del HiscoresCache[username]
+					self.usersDeleted.append(username)
+					self.purgeCounter += 1
+			return True
+		except Exception as e:
+			raise Exception(e)
+
+		finally:
+			HiscoresCache.close()
+
+	def removeFromCache(self, username: str):
+		"""removeFromCache Method
+
+		The removeFromCache method allows for manual removal from cache by supplying the username of the individual to
+		be removed.  If the individual isn't in the HiscoresCache file, this method returns None.  If the user has been
+		removed from the HiscoresCache file, this method returns True.
+		"""
+		try: 
+			HiscoresCache = shelve.open(self.HiscoresCacheFilePath)
+			if username.lower() not in HiscoresCache:
+				return None
+			else:
+				del HiscoresCache[username.lower()]
+				return True
+		except Exception as e:
+			raise Exception(e)
+		finally:
+			HiscoresCache.close()
