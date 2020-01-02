@@ -50,6 +50,8 @@
 > 
 > # Reinitializing the Hiscores class is quick now, as we already have the information cached
 > user = Hiscores('zezima', caching=True)
+> # user = Hiscores('zezima', caching=True, cacheTTL=7200) # Optional custom cacheTTL
+> 
 > print("Current level:", user.skill('attack', 'level'))
 > print("Current rank:", user.skill('attack', 'rank'))
 > print("Current exp:", user.skill('attack', 'experience'))
