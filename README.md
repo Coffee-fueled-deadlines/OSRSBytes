@@ -60,31 +60,31 @@
 > ```
 
 ### Example Invocation (HiscoresCache)
-The OSRSBytes v1.2.0 library allows for you to directly manage the HiscoresCache independant of the Hiscores module.
-```python
-##############################
-# Working with HiscoresCache #
-##############################
-from OSRSBytes import HiscoresCache
-
-# Initialize the cache object
-cache = HiscoresCache()
-
-# Lets clear a large number of expired users from the cache
-cache.clearExpiredCacheEntries()
-print(cache.purgeCounter) # Int
-print(cache.usersDeleted) # List
-
-# Lets remove a specific user from the HiscoresCache
-if cache.removeFromCache("Zezima"):
-    print("User Removed")
-else:
-    print("User not in cache")
-
-# Lets completely destroy the cache.  Note that this method completed removes the cache files as well as the
-# cache folder itself.
-cache.destroyCache()
-```
+> The OSRSBytes v1.2.0 library allows for you to directly manage the HiscoresCache independant of the Hiscores module.
+> ```python
+> ##############################
+> # Working with HiscoresCache #
+> ##############################
+> from OSRSBytes import HiscoresCache
+> 
+> # Initialize the cache object
+> cache = HiscoresCache()
+> 
+> # Lets clear a large number of expired users from the cache
+> cache.clearExpiredCacheEntries()
+> print(cache.purgeCounter) # Int
+> print(cache.usersDeleted) # List
+> 
+> # Lets remove a specific user from the HiscoresCache
+> if cache.removeFromCache("Zezima"):
+>     print("User Removed")
+> else:
+>     print("User not in cache")
+> 
+> # Lets completely destroy the cache.  Note that this method completed removes the cache files as well as the
+> # cache folder itself.
+> cache.destroyCache()
+> ```
 
 ### Example Invocation (Items)
 ```python
