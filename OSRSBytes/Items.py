@@ -13,14 +13,19 @@ be adjusted and added in the Items Module.
 # Generic/Built-in Imports
 import json
 import math
+import os
+import shelve
+import time
 import urllib.request
+
+from OSRSBytes1.Utilities import Utilities
 
 # META Data
 __author__     = 'Markis Cook'
 __copyright__  = 'Copyright 2019, Markis H. Cook'
 __credits__    = ['Markis Cook (Lead Programmer, Creator)']
 __license__    = 'EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)'
-__version__    = '1.1.0'
+__version__    = '1.2.0'
 __maintainer__ = 'Markis Cook'
 __email__      = 'cookm0803@gmail.com'
 __status__     = 'Open'
@@ -30,7 +35,8 @@ __status__     = 'Open'
 ################
 class DoNotRunDirectly(Exception):
 	pass
-
+class APIDown(Exception):
+	pass
 ############################
 #  Do not run if __main__  #
 ############################
@@ -64,13 +70,99 @@ class Items(object):
 		None
 	"""
 
-	def __init__(self):
-		# Grand Exchange item lookup Initialization will go here
-		req, buylims = self._getHTTPRequest()
-		self.itemname = self._parseResponseByItemName(req, buylims)
-		self.itemid   = self._parseResponseByItemID(req, buylims)
-		if not (self.itemname or self.itemid):
-			raise APIDown('The rsbuddy market API appears to be down')
+	def __init__(self, caching: bool=False, cacheTTL: int=600, force_cache_update: bool=False):
+		# Caching information
+		self.caching = caching
+		self.cacheTTL = cacheTTL
+		
+		# Check if caching 
+		if self.caching and not force_cache_update:
+			# Check if Cache needs to be updated
+			if self._checkCache():
+				# Cache is expired, update cache
+				req, buylims = self._getHTTPRequest()
+				self.itemid   = self._parseResponseByItemID(req, buylims)
+				self.itemname = self._parseResponseByItemName(req, buylims, self.itemid)
+			else:
+				# Cache is not expired, load from cache shelve
+				self._fetchCacheAndSetItems()
+		# Check if force_cache_update flag is set
+		elif self.caching and force_cache_update:
+			# Update Cache
+			req, buylims = self._getHTTPRequest()
+			self.itemid   = self._parseResponseByItemID(req, buylims)
+			self.itemname = self._parseResponseByItemName(req, buylims, self.itemid)
+		# Caching is disabled
+		else:
+			# Continue to connection
+			req, buylims = self._getHTTPRequest()
+			self.itemid   = self._parseResponseByItemID(req, buylims)
+			self.itemname = self._parseResponseByItemName(req, buylims, self.itemid)
+
+	def _fetchCacheAndSetItems(self):
+		try:
+			ItemsCacheNames = shelve.open( Utilities().__package_dir__ + "/cache/itemsname.shelve" )
+			ItemsCacheID    = shelve.open( Utilities().__package_dir__ + "/cache/itemsid.shelve" )
+			self.itemname   = dict(ItemsCacheNames)
+			self.itemid     = dict(ItemsCacheID)
+		except Exception as e:
+			raise Exception(e)
+		finally:
+			ItemsCacheNames.close()
+			ItemsCacheID.close()
+
+	def _checkCache(self):
+		if os.path.exists( Utilities().__package_dir__ + "/cache/itemsname.shelve.dat" ) and os.path.exists( Utilities().__package_dir__ + "/cache/itemsid.shelve.dat" ):
+			try:
+				tempItems = shelve.open( Utilities().__package_dir__ + "/cache/itemsname.shelve" )
+				if tempItems['cache_ttl'] > time.time():
+					a = False
+				else:
+					a = True
+			except Exception as e:
+				raise Exception(e)
+			finally:
+				tempItems.close()
+
+			try:
+				tempItemsID = shelve.open( Utilities().__package_dir__ + "/cache/itemsid.shelve" )
+				if tempItemsID['cache_ttl'] > time.time():
+					b = False
+				else:
+					b = True
+			except Exception as e:
+				raise Exception(e)
+			finally:
+				tempItemsID.close()
+
+			if a == True or b == True:
+				return True
+			else:
+				return False
+		else:
+			return True
+
+	def _cacheData(self, dictionary, itype: str):
+		if itype.lower() == "names":
+			if not os.path.exists( Utilities().__package_dir__ + "/cache/" ):
+				os.mkdir( Utilities().__package_dir__ + "/cache/" )
+			try:
+				ItemsCacheNames = shelve.open( Utilities().__package_dir__ + "/cache/itemsname.shelve" )
+				ItemsCacheNames.update(dictionary)
+			except Exception as e:
+				raise Exception(e)
+			finally:
+				ItemsCacheNames.close()
+		if itype.lower() == "ids":
+			if not os.path.exists( Utilities().__package_dir__ + "/cache/" ):
+				os.mkdir( Utilities().__package_dir__ + "/cache/" )
+			try:
+				ItemsCacheID = shelve.open( Utilities().__package_dir__ + "/cache/itemsid.shelve" )
+				ItemsCacheID.update(dictionary)
+			except Exception as e:
+				raise Exception(e)
+			finally:
+				ItemsCacheID.close()		
 
 	def _getHTTPRequest(self):
 		"""getHTTPRequest method
@@ -89,7 +181,7 @@ class Items(object):
 		return urllib.request.Request(rsBuddyAPI), urllib.request.Request(githubItemInfo)
 
 
-	def _parseResponseByItemName(self, req, buylims):
+	def _parseResponseByItemName(self, req, buylims, itemIDDict):
 		"""parseResponseByItemName method
 
 		The parseResponseByItemName() method is responsible for accepting the
@@ -107,11 +199,7 @@ class Items(object):
 			itemDict: A dictionary of OSRS Items keyed with item names
 			boolval: Returns false on parse error
 		"""
-		r = urllib.request.urlopen(req).read()
-		try:
-			parsedJSON =  json.loads(r.decode('utf-8'))
-		except:
-			return False
+		parsedJSON = itemIDDict
 		
 		r = urllib.request.urlopen(buylims).read()
 		try:
@@ -122,14 +210,25 @@ class Items(object):
 		# Lets make this item-set not suck
 		itemDict = {}
 		for idval in parsedJSON:
-			itemDict[parsedJSON[idval]['name'].lower()] = parsedJSON[idval]
+			try:
+				itemDict[parsedJSON[idval]['name'].lower()] = parsedJSON[idval]
+			except TypeError:
+				itemDict['cache_ttl'] = parsedJSON['cache_ttl']
 			try:
 				itemDict[parsedJSON[idval]['name'].lower()]['buy_limit'] = parsedBuyLims[parsedJSON[idval]['name'].lower()]['buy_limit']
+			except TypeError:
+				if idval == 'cache_ttl':
+					pass			
 			except:
 				itemDict[parsedJSON[idval]['name'].lower()]['buy_limit'] = None
+		finish = time.time()
 
+		# Check for caching
+		if self.caching:
+			self._cacheData(itemDict, itype="names")
 		# Return the dictionary
 		return itemDict
+
 
 	def _parseResponseByItemID(self, req, buylims):
 		"""parseResponseByItemID method
@@ -164,7 +263,14 @@ class Items(object):
 					parsedJSON[idval]['buy_limit'] = parsedBuyLims[parsedJSON[idval]['name'].lower()]['buy_limit']
 			except:
 				parsedJSON[idval]['buy_limit'] = None
-			
+
+		# Insert the cacheTTL timer
+		parsedJSON['cache_ttl'] = time.time() + self.cacheTTL
+
+		# Check for Caching
+		if self.caching:
+			self._cacheData(parsedJSON, itype="ids")
+		# Return the dictionary
 		return parsedJSON
 
 	def getItem(self, itemNameOrID: str):
