@@ -18,7 +18,7 @@ import shelve
 import time
 import urllib.request
 
-from OSRSBytes1.Utilities import Utilities
+from OSRSBytes.Utilities import Utilities
 
 # META Data
 __author__     = 'Markis Cook'
