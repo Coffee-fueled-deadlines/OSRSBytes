@@ -1,8 +1,5 @@
 # OSRSBytes
-[!https://img.shields.io/pypi/v/OSRSBytes?style=for-the-badge](PyPi version)
-https://img.shields.io/github/languages/code-size/coffee-fueled-deadlines/osrsbytes?style=for-the-badge
-https://img.shields.io/pypi/pyversions/OSRSBytes?style=for-the-badge
-https://img.shields.io/pypi/dm/OSRSBytes?style=for-the-badge
+
 
 
 ## Introduction
