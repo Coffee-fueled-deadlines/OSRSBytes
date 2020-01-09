@@ -1,4 +1,6 @@
 # OSRSBytes (v1.1.0)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+[![PyPI download month](https://img.shields.io/pypi/dm/ansicolortags.svg)](https://pypi.python.org/pypi/OSRSBytes/)
 
 ## Introduction
 
