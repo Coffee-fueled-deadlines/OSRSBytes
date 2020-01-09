@@ -1,5 +1,5 @@
 # OSRSBytes
-
+![version](https://img.shields.io/pypi/v/OSRSBytes?style=for-the-badge)
 
 
 ## Introduction
