@@ -3,6 +3,7 @@
 ## Development Branch
 
 [update 20200925]
+
 Currently implemented in v1.2.0:
 * Hiscores Shelve-caching (reduces the number of calls to the api).
 
