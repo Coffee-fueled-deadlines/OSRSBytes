@@ -14,6 +14,7 @@ setuptools.setup(
     url="https://github.com/Coffee-fueled-deadlines/OSRSBytes",
     packages=setuptools.find_packages() + ['modules'],
     include_package_data=True,
+    packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: EPL-2.0 License",
