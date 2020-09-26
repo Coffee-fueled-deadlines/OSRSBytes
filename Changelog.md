@@ -1,7 +1,13 @@
 # OSRSBytes ChangeLog
 ## Begin-date: 20191230
+## Last-Update: 20200201
 
-### V. 1.1.0
+### V. 1.2.0
+> 
+> Began implementation of OSRSBytes built-in shelve caching.  Caching is currently implemented for `Hiscores` and a new module has been added called, `HiscoresCaching` that allows for direct manipulation of the Cache within reason by users.
+> 
+
+### V. 1.1.0 (20191230)
 > 
 > Reworked the way OSRSBytes is constructed.  Previously it all initialized through `OSRSBytes/__init__.py` but that was confusing and not easily scalable (in my opinion).  I've instead reworked the `__init__.py` to instead call sub-modules (namely `Hiscores.py`, `Items.py`,  and `Utilities.py`).  
 > 

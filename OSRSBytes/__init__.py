@@ -9,6 +9,7 @@ EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENS
 
 # Initialize OSRSBytes Modules
 from OSRSBytes.Hiscores import *
+from OSRSBytes.HiscoresCache import *
 from OSRSBytes.Items import *
 from OSRSBytes.Utilities import *
 
@@ -17,7 +18,7 @@ __author__     = 'Markis Cook'
 __copyright__  = 'Copyright 2019, Markis H. Cook'
 __credits__    = ['Markis Cook (Lead Programmer, Creator)']
 __license__    = 'EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)'
-__version__    = '1.1.0'
+__version__    = '1.2.0'
 __maintainer__ = 'Markis Cook'
 __email__      = 'cookm0803@gmail.com'
 __status__     = 'Open'

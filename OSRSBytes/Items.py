@@ -20,7 +20,7 @@ __author__     = 'Markis Cook'
 __copyright__  = 'Copyright 2019, Markis H. Cook'
 __credits__    = ['Markis Cook (Lead Programmer, Creator)']
 __license__    = 'EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)'
-__version__    = '1.1.0'
+__version__    = '1.2.0'
 __maintainer__ = 'Markis Cook'
 __email__      = 'cookm0803@gmail.com'
 __status__     = 'Open'
@@ -29,6 +29,27 @@ __status__     = 'Open'
 #  Exceptions  #
 ################
 class DoNotRunDirectly(Exception):
+	"""DoNotRunDirectly Exception
+
+	This exception is called when the Items.py application is run directly
+	as main instead of being imported.
+	"""
+	pass
+
+class ItemNotValid(Exception):
+	"""ItemNotValid Exception
+
+	This exception is called when the itemname or id that is passed to getitem
+	is not valid or doesn't exist.
+	"""
+	pass
+
+class APIDown(Exception):
+	"""APIDown Exception
+
+	The APIDown Exception is called whenever the ItemDict fails to fetch from
+	the specified URL.
+	"""
 	pass
 
 ############################
@@ -43,19 +64,10 @@ if __name__ == "__main__":
 class Items(object):
 	"""Items Object
 
-	The Items Object accepts no arguments.  The Items object is, essentially, a collection
-	of two dictionaries on all OSRS Items.  The self.itemname dictionary is, as the name
-	implies, a dictionary of items with the item's name as it's key.  the self.itemid
-	dictionary, likewise, is a dictionary of items sorted by the item's id value.
-
-	While creating two separate dictionaries can take slightly longer, it allows for more
-	flexibility in development by giving developer's access to either method that they
-	prefer
-
-	Note that Methods prefixed by an underscore (_) would prefer that you stay out of their
-	living room.  This means that we'd prefer you don't call them directly and instead let the
-	class do it's job with them.  However, we're all consenting adults here, so if you need to
-	call them, go ahead I guess.
+	The Items Object accepts no arguments.  The Items object is  a dictionary of all OSRS Items.
+	Dictionary is ordered by ['itemname'] as key.  Items can be entered as name or itemid and are
+	converted.  While both are accepted, itemname is 'faster' since the dictionary is keyed by it
+	and entering an itemid requires a bit of searching.
 
 	Args:
 		None
@@ -66,13 +78,12 @@ class Items(object):
 
 	def __init__(self):
 		# Grand Exchange item lookup Initialization will go here
-		req, buylims = self._getHTTPRequest()
-		self.itemname = self._parseResponseByItemName(req, buylims)
-		self.itemid   = self._parseResponseByItemID(req, buylims)
-		if not (self.itemname or self.itemid):
+		req, buylims = self.__getHTTPRequest()
+		self.itemname = self.__parseResponseByItemName(req, buylims)
+		if not (self.itemname):
 			raise APIDown('The rsbuddy market API appears to be down')
 
-	def _getHTTPRequest(self):
+	def __getHTTPRequest(self):
 		"""getHTTPRequest method
 
 		The getHTTPRequest method is responsible for establishing a request
@@ -85,11 +96,36 @@ class Items(object):
 			string: API JSON Response in String format
 		"""
 		rsBuddyAPI = 'https://rsbuddy.com/exchange/summary.json'
-		githubItemInfo = 'https://raw.githubusercontent.com/Coffee-fueled-deadlines/OSRS-JSON-Item-Information/master/item_information.json'
-		return urllib.request.Request(rsBuddyAPI), urllib.request.Request(githubItemInfo)
+		osrs_wiki_buylims = 'https://oldschool.runescape.wiki/api.php?action=query&prop=revisions&rvprop=content&titles=Grand_Exchange/Buying_limits&format=json'
 
+		return urllib.request.Request(rsBuddyAPI), urllib.request.Request(osrs_wiki_buylims, headers={'User-Agent': 'Mozilla/5.0'})
 
-	def _parseResponseByItemName(self, req, buylims):
+	def __parseBuyLimits(self, unparsedJSON):
+		"""parseBuyLimits method
+
+		The parseBuyLimits method is responsible for parsing the json data retreived from
+		the OSRS wiki page associated with buy orders.
+
+		Args:
+			unparsedJSON : dict : The unparsed json dictionary received from the osrs wiki
+
+		Returns:
+			buyLimitDict : dict : A properly parsed dictionary needed by the rest of the 
+			                      __parseResponseByItemName method.
+
+		"""
+		for i,x in unparsedJSON['query']['pages'].items():
+			buyLimitString = x['revisions'][0]
+		buyLimitString = buyLimitString['*'].replace("\n","").replace("]]","").replace("[[","")
+		buyLimitString = buyLimitString.split("|}==Changes")[0].split("|Buy limit|-|")[1]
+		buyLimitList = buyLimitString.split("|-|")
+		buyLimitDict = {}
+		for item in buyLimitList:
+			itemsplit = item.split("|")
+			buyLimitDict[itemsplit[0].lower()] = {'buy_limit':int(itemsplit[1])}
+		return buyLimitDict
+
+	def __parseResponseByItemName(self, req, buylims):
 		"""parseResponseByItemName method
 
 		The parseResponseByItemName() method is responsible for accepting the
@@ -115,7 +151,8 @@ class Items(object):
 		
 		r = urllib.request.urlopen(buylims).read()
 		try:
-			parsedBuyLims = json.loads(r.decode('utf-8'))
+			unparsedBuyLims = json.loads(r.decode('utf-8'))
+			parsedBuyLims   = self.__parseBuyLimits(unparsedBuyLims)
 		except:
 			return False
 
@@ -131,41 +168,22 @@ class Items(object):
 		# Return the dictionary
 		return itemDict
 
-	def _parseResponseByItemID(self, req, buylims):
-		"""parseResponseByItemID method
+	def __normalize_input(self, itemNameOrID: str):
+		"""normalize_input method
 
-		The parseResponseByItemID() method is responsible for accepting the
-		request established by the getHTTPRequest() method and loading it into
-		the JSON string parser to convert it to a usable python dictionary keyed
-		with the item ID's of the items.
+		The normalize_input method replaces the old system that required OSRSBytes to create two separate dictionaries,
+		one keyed with itemid and the other keyed with itemname.  Instead, we have one dictionary keyed by Itemname and
+		normalize_input(itemNameOrID) converts it to the appropriate format.
 
 		Args:
-			req: The string request received by the getHTTPRequest() method
+			itemNameOrID: str|int : The item's name or its ID
 
 		Returns:
-			itemDict: dictionary of OSRS Items keyed by item ids
-			boolval: Returns false on failure to parse
+			String : The name of the item in string format
 		"""
-		r = urllib.request.urlopen(req).read()
-		try:
-			parsedJSON = json.loads(r.decode('utf-8'))
-		except:
-			return False
-		
-		r = urllib.request.urlopen(buylims).read()
-		try:
-			parsedBuyLims = json.loads(r.decode('utf-8'))
-		except:
-			return False
-		
-		for idval in parsedJSON:
-			try:
-				if parsedJSON[idval]['name'].lower() == parsedBuyLims[parsedJSON[idval]['name'].lower()]['item_name']:
-					parsedJSON[idval]['buy_limit'] = parsedBuyLims[parsedJSON[idval]['name'].lower()]['buy_limit']
-			except:
-				parsedJSON[idval]['buy_limit'] = None
-			
-		return parsedJSON
+		if type(itemNameOrID) == int or itemNameOrID.isnumeric():
+			return self.getName(str(itemNameOrID))
+		return itemNameOrID
 
 	def getItem(self, itemNameOrID: str):
 		"""getItem Method
@@ -174,9 +192,10 @@ class Items(object):
 		all item information.
 		"""
 		try:
-			return self.itemname[itemNameOrID.lower()]
+			return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]
 		except KeyError:
-			return self.itemid[itemNameOrID.lower()]
+			raise ItemNotValid("{} is not a valid item and was not found.".format(itemNameOrID))
+
 		
 	def getName(self, itemNameOrID: str):
 		"""getName Method
@@ -184,10 +203,9 @@ class Items(object):
 		The getName method, when supplied an Item Name or Item ID, returns a string value containing
 		the in-game name of the Item.
 		"""
-		try:
-			return self.itemname[itemNameOrID.lower()]['name']
-		except KeyError:
-			return self.itemid[itemNameOrID.lower()]['name']
+		for itemid, x in self.itemname.items():
+			if str(x['id']) == itemNameOrID or str(x['name']).lower() == itemNameOrID:
+				return x['name'].lower()
 
 	def getItemID(self, itemNameOrID: str):
 		"""getItemID method
@@ -195,10 +213,7 @@ class Items(object):
 		The getItemID method, when supplied an Item Name or Item ID, returns a string value containing
 		the Item ID of the Item.
 		"""
-		try:
-			return self.itemname[itemNameOrID.lower()]['id']
-		except KeyError:
-			return self.itemid[itemNameOrID.lower()]['id']			
+		return self.itemname[itemNameOrID.lower()]['id']		
 
 	def getBuyAverage(self, itemNameOrID: str):
 		"""getBuyAverage Method
@@ -206,10 +221,7 @@ class Items(object):
 		The getBuyAverage method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current in-game buy value.
 		"""
-		try:
-			return self.itemname[itemNameOrID.lower()]['buy_average']
-		except KeyError:
-			return self.itemid[itemNameOrID.lower()]['buy_average']
+		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['buy_average']
 
 	def getSellAverage(self, itemNameOrID: str):
 		"""getSellAverage Method
@@ -217,10 +229,7 @@ class Items(object):
 		The getSellAverage method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current in-game sell value.		
 		"""
-		try:
-			return self.itemname[itemNameOrID.lower()]['sell_average']
-		except KeyError:
-			return self.itemid[itemNameOrID.lower()]['sell_average']
+		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sell_average']
 
 	def getBuyQuantity(self, itemNameOrID: str):
 		"""getBuyQuantity Method
@@ -228,10 +237,7 @@ class Items(object):
 		The getBuyQuantity method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current number of in-game buy orders.
 		"""
-		try:
-			return self.itemname[itemNameOrID.lower()]['buy_quantity']
-		except KeyError:
-			return self.itemid[itemNameOrID.lower()]['buy_quantity']
+		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['buy_quantity']
 
 	def getSellQuantity(self, itemNameOrID: str):
 		"""getSellQuantity Method
@@ -239,10 +245,7 @@ class Items(object):
 		The getSellQuantity method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current number of in-game sell orders.
 		"""		
-		try:
-			return self.itemname[itemNameOrID.lower()]['sell_quantity']
-		except KeyError:
-			return self.itemid[itemNameOrID.lower()]['sell_quantity']
+		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sell_quantity']
 		
 	def getBuyLimit(self, itemNameOrID: str):
 		"""getBuyLimit Method
@@ -251,9 +254,7 @@ class Items(object):
 		the Grand Exchange Buy Limit for that item.  If a buy limit is not found, this method returns None
 		"""
 		try:
-			return self.itemname[itemNameOrID.lower()]['buy_limit']
-		except KeyError:
-			return self.itemid[itemNameOrID.lower()]['buy_limit']
+			return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['buy_limit']
 		except:
 			return False
 
@@ -263,10 +264,7 @@ class Items(object):
 		The getShopPrice method, when supplied an Item Name or Item ID, returns an integer value containing
 		the in-game item's shop price
 		"""
-		try:
-			return self.itemname[itemNameOrID.lower()]['sp']
-		except KeyError:
-			return self.itemid[itemNameOrID.lower()]['sp']
+		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sp']
 
 	def getLowAlchValue(self, itemNameOrID: str):
 		"""getLowAlchValue Method
@@ -274,10 +272,7 @@ class Items(object):
 		The getLowAlchValue method, when supplied an Item Name or Item ID, returns an integer value containing
 		the coin return value of casting Low Alchemy on the in-game item.
 		"""
-		try:
-			return math.ceil(self.itemname[itemNameOrID.lower()]['sp']*.40)
-		except KeyError:
-			return math.ceil(self.itemid[itemNameOrID.lower()]['sp']*.40)
+		return math.ceil(self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sp']*.40)
 
 	def getHighAlchValue(self, itemNameOrID: str):
 		"""getHighAlchValue Method
@@ -285,10 +280,7 @@ class Items(object):
 		The getHighAlchValue method, when supplied an Item Name or Item ID, returns an integer value containing
 		the coin return value of casting High Alchemy on the in-game item.		
 		"""
-		try:
-			return math.ceil(self.itemname[itemNameOrID.lower()]['sp']*.60)
-		except KeyError:
-			return math.ceil(self.itemid[itemNameOrID.lower()]['sp']*.60)
+		return math.ceil(self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sp']*.60)
 
 	def isMembers(self, itemNameOrID: str):
 		"""isMembers Method
@@ -296,10 +288,7 @@ class Items(object):
 		The isMembers method, when supplied with an Item Name or Item ID, returns a boolean value dependant
 		on whether the supplied item is Members Only or not.
 		"""
-		try:
-			return bool(self.itemname[itemNameOrID.lower()]['members'])
-		except KeyError:
-			return bool(self.itemid[itemNameOrID.lower()]['members'])
+		return bool(self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['members'])
 	##########################
 	#  END: Items Object     #
 	##########################
