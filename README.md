@@ -1,13 +1,13 @@
-# OSRSBytes (v1.2.0)
+# OSRSBytes (v1.2.2)
 
 ## Development Branch
 
 [update 20200925]
 
-__Currently implemented in v1.2.0__:
+__Currently implemented in v1.2.2__:
 * Hiscores Shelve-caching (reduces the number of calls to the api).
 
-__Fixes currently implemented in v1.2.0__:
+__Fixes currently implemented in v1.2.2__:
 * Previously, ItemID and ItemName each had their own dictionary to allow users to search by either ItemID or ItemName.  This was dumb of me, so I instead implemented one dictionary that was keyed by ItemName.  You can still search by ItemID thanks to the `self.__normalize_input()` method which will ensure that anything you input is converted to item name.  If you put in `int(1213)` or `str(1213)` the method will, ultimately, return `"rune dagger"`
 
 ## Introduction
@@ -25,7 +25,7 @@ __Fixes currently implemented in v1.2.0__:
 > ```
 
 ### Example Invocation (Hiscores)
-> The OSRSBytes v1.2.0 library contains caching on Hiscores to improve performance.  Caching is disabled by default and must be enabled when initializing the hiscores object.  Note that default TTL of cache is `3600` seconds or `1` hour.
+> The OSRSBytes v1.2.2 library contains caching on Hiscores to improve performance.  Caching is disabled by default and must be enabled when initializing the hiscores object.  Note that default TTL of cache is `3600` seconds or `1` hour.
 > 
 > Example without Caching
 > ```python
@@ -72,7 +72,7 @@ __Fixes currently implemented in v1.2.0__:
 > ```
 
 ### Example Invocation (HiscoresCache)
-> The OSRSBytes v1.2.0 library allows for you to directly manage the HiscoresCache independant of the Hiscores module.
+> The OSRSBytes v1.2.2 library allows for you to directly manage the HiscoresCache independant of the Hiscores module.
 > ```python
 > ##############################
 > # Working with HiscoresCache #
