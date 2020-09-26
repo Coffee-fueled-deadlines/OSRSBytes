@@ -29,12 +29,27 @@ __status__     = 'Open'
 #  Exceptions  #
 ################
 class DoNotRunDirectly(Exception):
+	"""DoNotRunDirectly Exception
+
+	This exception is called when the Items.py application is run directly
+	as main instead of being imported.
+	"""
 	pass
 
 class ItemNotValid(Exception):
+	"""ItemNotValid Exception
+
+	This exception is called when the itemname or id that is passed to getitem
+	is not valid or doesn't exist.
+	"""
 	pass
 
 class APIDown(Exception):
+	"""APIDown Exception
+
+	The APIDown Exception is called whenever the ItemDict fails to fetch from
+	the specified URL.
+	"""
 	pass
 
 ############################
