@@ -4,10 +4,10 @@
 
 [update 20200925]
 
-Currently implemented in v1.2.0:
+__Currently implemented in v1.2.0__:
 * Hiscores Shelve-caching (reduces the number of calls to the api).
 
-Fixes currently implemented in v1.2.0:
+__Fixes currently implemented in v1.2.0__:
 * Previously, ItemID and ItemName each had their own dictionary to allow users to search by either ItemID or ItemName.  This was dumb of me, so I instead implemented one dictionary that was keyed by ItemName.  You can still search by ItemID thanks to the `self.__normalize_input()` method which will ensure that anything you input is converted to item name.  If you put in `int(1213)` or `str(1213)` the method will, ultimately, return `"rune dagger"`
 
 ## Introduction
