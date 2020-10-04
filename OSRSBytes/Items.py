@@ -20,7 +20,7 @@ __author__     = 'Markis Cook'
 __copyright__  = 'Copyright 2019, Markis H. Cook'
 __credits__    = ['Markis Cook (Lead Programmer, Creator)']
 __license__    = 'EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)'
-__version__    = '1.2.0'
+__version__    = '1.2.3'
 __maintainer__ = 'Markis Cook'
 __email__      = 'cookm0803@gmail.com'
 __status__     = 'Open'
@@ -98,7 +98,7 @@ class Items(object):
 		rsBuddyAPI = 'https://rsbuddy.com/exchange/summary.json'
 		osrs_wiki_buylims = 'https://oldschool.runescape.wiki/api.php?action=query&prop=revisions&rvprop=content&titles=Grand_Exchange/Buying_limits&format=json'
 
-		return urllib.request.Request(rsBuddyAPI), urllib.request.Request(osrs_wiki_buylims, headers={'User-Agent': 'Mozilla/5.0'})
+		return urllib.request.Request(rsBuddyAPI, headers={'User-Agent': 'Mozilla/5.0'}), urllib.request.Request(osrs_wiki_buylims, headers={'User-Agent': 'Mozilla/5.0'})
 
 	def __parseBuyLimits(self, unparsedJSON):
 		"""parseBuyLimits method
@@ -121,8 +121,11 @@ class Items(object):
 		buyLimitList = buyLimitString.split("|-|")
 		buyLimitDict = {}
 		for item in buyLimitList:
-			itemsplit = item.split("|")
-			buyLimitDict[itemsplit[0].lower()] = {'buy_limit':int(itemsplit[1])}
+			try:
+				itemsplit = item.split("|")
+				buyLimitDict[itemsplit[0].lower()] = {'buy_limit':int(itemsplit[1])}
+			except:
+				pass # Skip anything that is wonky.
 		return buyLimitDict
 
 	def __parseResponseByItemName(self, req, buylims):
@@ -154,7 +157,7 @@ class Items(object):
 			unparsedBuyLims = json.loads(r.decode('utf-8'))
 			parsedBuyLims   = self.__parseBuyLimits(unparsedBuyLims)
 		except:
-			return False
+			pass # Passing this on fail prevents library from crashing
 
 		# Lets make this item-set not suck
 		itemDict = {}
