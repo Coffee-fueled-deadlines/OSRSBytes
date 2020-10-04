@@ -5,32 +5,104 @@
 ![platform & version support](https://img.shields.io/pypi/pyversions/OSRSBytes?style=for-the-badge)
 
 
+## Updates [20200925]
+
+__Currently implemented in v1.2.2__:
+* Hiscores Shelve-caching (reduces the number of calls to the api).
+
+__Fixes currently implemented in v1.2.2__:
+* Previously, ItemID and ItemName each had their own dictionary to allow users to search by either ItemID or ItemName.  This was dumb of me, so I instead implemented one dictionary that was keyed by ItemName.  You can still search by ItemID thanks to the `self.__normalize_input()` method which will ensure that anything you input is converted to item name.  If you put in `int(1213)` or `str(1213)` the method will, ultimately, return `"rune dagger"`
+
+__hotfix__:
+* Fixed an issue with package not installing from pip
+
 ## Introduction
-
-OSRSBytes is an all-in-one Python library for Old School Runescape (OSRS) that features Item Information Lookup, Hiscores, and Market information from RSBuddy.
-
+> 
+> OSRSBytes is an all-in-one Python library for Old School Runescape (OSRS) that features Item Information Lookup, Hiscores, and Market information from RSBuddy.
+ 
 ### Installation:
-```
-pip install OSRSBytes
-```
+> ```cmd
+> pip install OSRSBytes
+> ```
 
 ### Upgrade
-```
-pip install OSRSBytes --upgrade
-```
+> ```cmd
+> pip install OSRSBytes --upgrade
+> ```
 
 ### Example Invocation (Hiscores)
-```python
-from OSRSBytes import Hiscores
+> The OSRSBytes v1.2.0 library contains caching on Hiscores to improve performance.  Caching is disabled by default and must be enabled when initializing the hiscores object.  Note that default TTL of cache is `3600` seconds or `1` hour.
+> 
+> Example without Caching
+> ```python
+> ######################
+> # No Caching Example #
+> ######################
+> from OSRSBytes import Hiscores
+> 
+> user = Hiscores('Zezima')
+> 
+> # Lets display some information
+> print("Current level:", user.skill('attack', 'level'))
+> print("Current rank:", user.skill('attack', 'rank'))
+> print("Current exp:", user.skill('attack', 'experience'))
+> print("Exp remaining:", user.skill('attack','exp_to_next_level'))
+> ```
+> 
+> Example utilizing Caching
+> ```python
+> ###################
+> # Caching Example #
+> ###################
+> from OSRSBytes import Hiscores
+> 
+> user = Hiscores('zezima', caching=True)
+>  
+> # Lets display some information
+> print("Current level:", user.skill('attack', 'level'))
+> print("Current rank:", user.skill('attack', 'rank'))
+> print("Current exp:", user.skill('attack', 'experience'))
+> print("Exp remaining:", user.skill('attack','exp_to_next_level'))
+> 
+> # Reinitializing the Hiscores class is quick now, as we already have the information cached
+> user = Hiscores('zezima', caching=True)
+> # user = Hiscores('zezima', caching=True, cacheTTL=7200) # Optional custom cacheTTL
+> 
+> print("Current level:", user.skill('attack', 'level'))
+> print("Current rank:", user.skill('attack', 'rank'))
+> print("Current exp:", user.skill('attack', 'experience'))
+> print("Exp remaining:", user.skill('attack','exp_to_next_level'))
+> 
+> # Lets get the current time left in the cache (in seconds) for Zezima
+> print("TTL for Cache: ", user.getCacheTTLRemaining()) # rounded up to nearest second
+> ```
 
-user = Hiscores('Zezima', 'N')
-
-# Lets display some information
-print("Current level:", user.skill('attack', 'level'))
-print("Current rank:", user.skill('attack', 'rank'))
-print("Current exp:", user.skill('attack', 'experience'))
-print("Exp remaining:", user.skill('attack','exp_to_next_level'))
-```
+### Example Invocation (HiscoresCache)
+> The OSRSBytes v1.2.0 library allows for you to directly manage the HiscoresCache independant of the Hiscores module.
+> ```python
+> ##############################
+> # Working with HiscoresCache #
+> ##############################
+> from OSRSBytes import HiscoresCache
+> 
+> # Initialize the cache object
+> cache = HiscoresCache()
+> 
+> # Lets clear a large number of expired users from the cache
+> cache.clearExpiredCacheEntries()
+> print(cache.purgeCounter) # Int
+> print(cache.usersDeleted) # List
+> 
+> # Lets remove a specific user from the HiscoresCache
+> if cache.removeFromCache("Zezima"):
+>     print("User Removed")
+> else:
+>     print("User not in cache")
+> 
+> # Lets completely destroy the cache.  Note that this method completed removes the cache files as well as the
+> # cache folder itself.
+> cache.destroyCache()
+> ```
 
 ### Example Invocation (Items)
 ```python
