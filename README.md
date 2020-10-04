@@ -4,7 +4,7 @@
 ![size](https://img.shields.io/github/languages/code-size/coffee-fueled-deadlines/osrsbytes?style=for-the-badge)
 ![platform & version support](https://img.shields.io/pypi/pyversions/OSRSBytes?style=for-the-badge)
 =======
-## Development Branch
+## Production Branch
 
 [update 20200925]
 
