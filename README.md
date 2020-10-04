@@ -1,10 +1,13 @@
-# OSRSBytes (v1.2.2)
+# OSRSBytes (v1.2.3)
 ![version](https://img.shields.io/pypi/v/OSRSBytes?style=for-the-badge)
 ![downloads](https://img.shields.io/pypi/dm/OSRSBytes?style=for-the-badge)<br>
 ![size](https://img.shields.io/github/languages/code-size/coffee-fueled-deadlines/osrsbytes?style=for-the-badge)
 ![platform & version support](https://img.shields.io/pypi/pyversions/OSRSBytes?style=for-the-badge)
 =======
 ## Production Branch
+[update 20201004]
+__Bug Fix__:
+* Fixed a bug that caused the API to appear to be down due to a messup in parsing.  Update OSRSBytes with `pip install OSRSBytes --upgrade` to fix this bug.
 
 [update 20200925]
 
