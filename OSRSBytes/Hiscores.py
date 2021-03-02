@@ -264,7 +264,7 @@ class Hiscores(object):
 		subset['total']    = info
 
 		skills = [
-			  	'attack',
+			  'attack',
 		          'defense',
 		          'strength',
 		          'hitpoints',
@@ -295,8 +295,12 @@ class Hiscores(object):
 			info['level']      = int(self.data[counter+4])
 			info['experience'] = int(self.data[counter+5])
 			level = int(info['level']+1)
-			info['next_level_exp'] = math.floor(sum((math.floor(level + 300 * (2 ** (level / 7.0))) for level in range(1, level)))/4)
-			info['exp_to_next_level'] = int(info['next_level_exp'] - info['experience'])
+			if (int(info['experience']) == 200000000):
+				info['next_level_exp'] = 0
+				info['exp_to_next_level'] = 0
+			else:
+				info['next_level_exp'] = math.floor(sum((math.floor(level + 300 * (2 ** (level / 7.0))) for level in range(1, level)))/4)
+				info['exp_to_next_level'] = int(info['next_level_exp'] - info['experience'])
 			subset[skills[i]] = info
 			counter += 3
 
