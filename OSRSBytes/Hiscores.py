@@ -231,7 +231,7 @@ class Hiscores(object):
 			self.parseData(): This method is called when self.status is 200 (success)
 		"""
 		if self.status != 200:
-			self.errorMsg = "Player name given not found in account type provided.  Valid account types are, 'N' (Normal), 'IM' (Iron Man), 'UIM' (Ultimate Iron Man), 'HIC' (Hardcore Iron Man)"
+			self.errorMsg = "Player name given not found in account type provided.  Valid account types are, 'N' (Normal), 'IM' (Iron Man), 'UIM' (Ultimate Iron Man), 'HIM' (Hardcore Iron Man)"
 			self.error()
 		else:
 			self.data = self.response.read().decode('ascii')
