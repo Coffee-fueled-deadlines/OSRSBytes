@@ -19,7 +19,6 @@ throttling or IP Banning the script that's making these API Calls.  Caching is h
 import http.client
 import math
 import os
-from sys import exit
 import shelve
 import time
 
@@ -39,6 +38,12 @@ __status__     = 'Open'
 #  Exceptions  #
 ################
 class DoNotRunDirectly(Exception):
+	pass
+
+class SkillError(Exception):
+	pass
+
+class HiscoresError(Exception):
 	pass
 
 ############################
@@ -331,17 +336,14 @@ class Hiscores(object):
 		"""
 		try:
 			if stype.lower() not in ['rank','level','experience','exp_to_next_level']:
-				print("stype must be 'rank','level', or experience'")
-				exit(0)
+				SkillError("stype must be 'rank','level', or experience'")
 			else:
 				return self.stats[self.username][skill.lower()][stype.lower()]
 		except KeyError as KE:
-			print("ERROR: skill {} does not exist".format(KE))
-			exit(0)
+			SkillError("ERROR: skill {} does not exist".format(KE))
 
 	def error(self):
-		print("Error occurred: {}".format(self.errorMsg))
-		exit(0)
+		HiscoresError("Error occurred: {}".format(self.errorMsg))
 	##########################
 	#  END: Hiscores Object  #
 	##########################
