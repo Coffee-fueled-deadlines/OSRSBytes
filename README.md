@@ -1,10 +1,15 @@
-# OSRSBytes (v1.2.3)
+# OSRSBytes (v1.2.4)
 ![version](https://img.shields.io/pypi/v/OSRSBytes?style=for-the-badge)
 ![downloads](https://img.shields.io/pypi/dm/OSRSBytes?style=for-the-badge)<br>
 ![size](https://img.shields.io/github/languages/code-size/coffee-fueled-deadlines/osrsbytes?style=for-the-badge)
 ![platform & version support](https://img.shields.io/pypi/pyversions/OSRSBytes?style=for-the-badge)
 =======
 ## Production Branch
+[update 20210710]
+__Fixes implemented in v1.2.4__:
+* Escape username to avoid getting errors for usernames that contain spaces.
+* Fixed bug in setup.py causing a manual install to fail and matched version numbers to 1.2.4.
+
 [update 20201004]
 __Bug Fix__:
 * Fixed a bug that caused the API to appear to be down due to a messup in parsing.  Update OSRSBytes with `pip install OSRSBytes --upgrade` to fix this bug.
@@ -32,8 +37,7 @@ __Fixes currently implemented in v1.2.2__:
 > ```
 
 ### Example Invocation (Hiscores)
-> The OSRSBytes v1.2.2 library contains caching on Hiscores to improve performance.  Caching is disabled by default and must be enabled when initializing the hiscores object.  Note that default TTL of cache is `3600` seconds or `1` hour.
-> 
+> The OSRSBytes library contains caching on Hiscores to improve performance.  Caching is disabled by default and must be enabled when initializing the hiscores object.  Note that default TTL of cache is `3600` seconds or `1` hour.
 > Example without Caching
 > ```python
 > ######################
@@ -79,7 +83,7 @@ __Fixes currently implemented in v1.2.2__:
 > ```
 
 ### Example Invocation (HiscoresCache)
-> The OSRSBytes v1.2.2 library allows for you to directly manage the HiscoresCache independant of the Hiscores module.
+> The OSRSBytes library allows for you to directly manage the HiscoresCache independant of the Hiscores module.
 > ```python
 > ##############################
 > # Working with HiscoresCache #
