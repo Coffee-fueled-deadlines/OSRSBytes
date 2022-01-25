@@ -76,15 +76,56 @@ class Items(object):
 		None
 	"""
 
-	def __init__(self):
+	def __init__(self, api="buddy"):
 		# Grand Exchange item lookup Initialization will go here
-		req, buylims = self.__getHTTPRequest()
-		self.itemname = self.__parseResponseByItemName(req, buylims)
+		self.api = api
+		if self.api == "buddy":
+			req, buylims = self.__getHTTPRequestB()
+			self.itemname = self.__parseResponseByItemName(req, buylims)
+		elif self.api == 'wiki': # Probs should be elif
+			prices, volumes, mappings = self.__getHTTPRequestW()
+			self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings)
+		else:
+			raise APIDown(f'The term {api} is not supported. Please try: \'buddy\' or \'wiki\'')
 		if not (self.itemname):
-			raise APIDown('The rsbuddy market API appears to be down')
+			raise APIDown(f'The {api} API appears to be down, please try the other')
 
-	def __getHTTPRequest(self):
-		"""getHTTPRequest method
+	def __getHTTPRequestW(self):
+		"""getHTTPRequestW
+
+		This method is responsible for pulling data from runewiki API's.
+
+		Args:
+			None
+		Returns:
+			dict latest: The latest pricing info in dictionary format
+			dict volumes: The latest trading volumes for items.
+			list mappings: Mappings of item info.
+		"""
+		url_prices = 'https://prices.runescape.wiki/api/v1/osrs/latest'
+		url_volumes = 'https://prices.runescape.wiki/api/v1/osrs/volumes'
+		url_mappings = 'https://prices.runescape.wiki/api/v1/osrs/mapping'
+		headers = {
+			'User-Agent': 'OSRSBytes',
+		    'From': 'OSRSBytes@gmail.com'
+			}
+
+		req = urllib.request.Request(url_mappings, headers=headers)
+		f = urllib.request.urlopen(req)
+		mappings = json.load(f)
+
+		req = urllib.request.Request(url_prices, headers=headers)
+		f = urllib.request.urlopen(req)
+		prices = json.load(f)['data']
+
+		req = urllib.request.Request(url_volumes, headers=headers)
+		f = urllib.request.urlopen(req)
+		volumes = json.load(f)['data']
+
+		return prices, volumes, mappings
+
+	def __getHTTPRequestB(self):
+		"""getHTTPRequestB method
 
 		The getHTTPRequest method is responsible for establishing a request
 		with the rsbuddy API.
@@ -124,6 +165,44 @@ class Items(object):
 			itemsplit = item.split("|")
 			buyLimitDict[itemsplit[0].lower()] = {'buy_limit':int(itemsplit[1])}
 		return buyLimitDict
+
+	def __rectifyWikiResponse(self, prices, volumes, mappings):
+		"""rectifyResponseWithMappings
+
+		This method is responsible for accepting the raw dict response from
+		RuneWiki's API and combining them with an existing mapping of items.
+		Args:
+			dict: The dict response of latest prices and volumes
+		Returns:
+			dict: A rectified dictionary of all available item names.
+
+		NOTE: There are more item mappings than pricing or volumes. So not
+			all mappings will have pricing/volume info.
+		"""
+		rect = {}
+		for item in mappings:
+		    item['name'] = item['name'].lower() # Normalize itemnames
+		    rect[item['name']] = {}
+		    rect[item['name']]['id'] = item['id']
+		    rect[item['name']]['members'] = item['members']
+		    rect[item['name']]['examine'] = item['examine']
+		    if 'limit' in item:
+		        rect[item['name']]['buy_limit'] = item['limit']
+		    if 'lowalch' in item:
+		        rect[item['name']]['lowalch'] = item['lowalch']
+		    if 'highalch' in item:
+		        rect[item['name']]['highalch'] = item['highalch']
+		    if 'value' in item:
+		        rect[item['name']]['sp'] = item['value']
+
+		for item in rect:
+		    if str(rect[item]['id']) in volumes:
+		        rect[item]['volume'] = volumes[str(rect[item]['id'])]
+		    if str(rect[item]['id']) in prices:
+		        rect[item]['buy_average'] = prices[str(rect[item]['id'])]['high']
+		        rect[item]['sell_average'] = prices[str(rect[item]['id'])]['low']
+
+		return rect
 
 	def __parseResponseByItemName(self, req, buylims):
 		"""parseResponseByItemName method
@@ -237,6 +316,8 @@ class Items(object):
 		The getBuyQuantity method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current number of in-game buy orders.
 		"""
+		if self.api == 'wiki':
+			return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['volume']
 		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['buy_quantity']
 
 	def getSellQuantity(self, itemNameOrID: str):
@@ -245,6 +326,8 @@ class Items(object):
 		The getSellQuantity method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current number of in-game sell orders.
 		"""		
+		if self.api == 'wiki':
+			return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['volume']
 		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sell_quantity']
 		
 	def getBuyLimit(self, itemNameOrID: str):
