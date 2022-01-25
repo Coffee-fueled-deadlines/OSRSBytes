@@ -93,7 +93,8 @@ class Items(object):
 	def __getHTTPRequestW(self):
 		"""getHTTPRequestW
 
-		This method is responsible for pulling data from runewiki API's.
+		This method is responsible for pulling data from runewiki API's. The
+		headers are necessary to get sucessful API requests.
 
 		Args:
 			None
@@ -170,39 +171,44 @@ class Items(object):
 		"""rectifyResponseWithMappings
 
 		This method is responsible for accepting the raw dict response from
-		RuneWiki's API and combining them with an existing mapping of items.
+		RuneWiki's API and combining them into a servicable json/dict structure.
 		Args:
-			dict: The dict response of latest prices and volumes
+			prices dict: a dictionary of the latest item pricing
+			volumes dict: A dictionary of the latest trading volumes
+			mappings list: A list of relevant item info
 		Returns:
 			dict: A rectified dictionary of all available item names.
 
 		NOTE: There are more item mappings than pricing or volumes. So not
-			all mappings will have pricing/volume info.
+				all mappings will have pricing/volume info.
 		"""
 		rect = {}
-		for item in mappings:
-		    item['name'] = item['name'].lower() # Normalize itemnames
-		    rect[item['name']] = {}
-		    rect[item['name']]['id'] = item['id']
-		    rect[item['name']]['members'] = item['members']
-		    rect[item['name']]['examine'] = item['examine']
-		    if 'limit' in item:
-		        rect[item['name']]['buy_limit'] = item['limit']
-		    if 'lowalch' in item:
-		        rect[item['name']]['lowalch'] = item['lowalch']
-		    if 'highalch' in item:
-		        rect[item['name']]['highalch'] = item['highalch']
-		    if 'value' in item:
-		        rect[item['name']]['sp'] = item['value']
+		try:
+			for item in mappings:
+			    item['name'] = item['name'].lower() # Normalize itemnames
+			    rect[item['name']] = {}
+			    rect[item['name']]['name'] = item['name']
+			    rect[item['name']]['id'] = item['id']
+			    rect[item['name']]['members'] = item['members']
+			    rect[item['name']]['examine'] = item['examine']
+			    if 'limit' in item:
+			        rect[item['name']]['buy_limit'] = item['limit']
+			    if 'lowalch' in item:
+			        rect[item['name']]['lowalch'] = item['lowalch']
+			    if 'highalch' in item:
+			        rect[item['name']]['highalch'] = item['highalch']
+			    if 'value' in item:
+			        rect[item['name']]['sp'] = item['value']
 
-		for item in rect:
-		    if str(rect[item]['id']) in volumes:
-		        rect[item]['volume'] = volumes[str(rect[item]['id'])]
-		    if str(rect[item]['id']) in prices:
-		        rect[item]['buy_average'] = prices[str(rect[item]['id'])]['high']
-		        rect[item]['sell_average'] = prices[str(rect[item]['id'])]['low']
-
-		return rect
+			for item in rect:
+			    if str(rect[item]['id']) in volumes:
+			        rect[item]['volume'] = volumes[str(rect[item]['id'])]
+			    if str(rect[item]['id']) in prices:
+			        rect[item]['buy_average'] = prices[str(rect[item]['id'])]['high']
+			        rect[item]['sell_average'] = prices[str(rect[item]['id'])]['low']
+			return rect
+		except:
+			return False
 
 	def __parseResponseByItemName(self, req, buylims):
 		"""parseResponseByItemName method
@@ -283,7 +289,7 @@ class Items(object):
 		the in-game name of the Item.
 		"""
 		for itemid, x in self.itemname.items():
-			if str(x['id']) == itemNameOrID or str(x['name']).lower() == itemNameOrID:
+			if str(x['id']) == str(itemNameOrID) or str(x['name']).lower() == str(itemNameOrID):
 				return x['name'].lower()
 
 	def getItemID(self, itemNameOrID: str):
@@ -292,7 +298,7 @@ class Items(object):
 		The getItemID method, when supplied an Item Name or Item ID, returns a string value containing
 		the Item ID of the Item.
 		"""
-		return self.itemname[itemNameOrID.lower()]['id']		
+		return self.itemname[str(itemNameOrID).lower()]['id']
 
 	def getBuyAverage(self, itemNameOrID: str):
 		"""getBuyAverage Method
