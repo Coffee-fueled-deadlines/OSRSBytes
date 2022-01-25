@@ -202,7 +202,8 @@ class Items(object):
 
 			for item in rect:
 			    if str(rect[item]['id']) in volumes:
-			        rect[item]['volume'] = volumes[str(rect[item]['id'])]
+			        rect[item]['buy_quantity'] = volumes[str(rect[item]['id'])]
+			        rect[item]['sell_quantity'] = volumes[str(rect[item]['id'])]
 			    if str(rect[item]['id']) in prices:
 			        rect[item]['buy_average'] = prices[str(rect[item]['id'])]['high']
 			        rect[item]['sell_average'] = prices[str(rect[item]['id'])]['low']
@@ -322,8 +323,6 @@ class Items(object):
 		The getBuyQuantity method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current number of in-game buy orders.
 		"""
-		if self.api == 'wiki':
-			return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['volume']
 		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['buy_quantity']
 
 	def getSellQuantity(self, itemNameOrID: str):
@@ -332,8 +331,6 @@ class Items(object):
 		The getSellQuantity method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current number of in-game sell orders.
 		"""		
-		if self.api == 'wiki':
-			return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['volume']
 		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sell_quantity']
 		
 	def getBuyLimit(self, itemNameOrID: str):
