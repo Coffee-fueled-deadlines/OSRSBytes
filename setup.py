@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='OSRSBytes',  
-    version='1.2.4',
+    version='1.2.5',
     author="Coffee Fueled Deadlines",
     author_email="cookm0803@gmail.com",
     description="An all-in-one OSRS Library with Hiscores and Grand Exchange Market Information",
