@@ -5,10 +5,9 @@
 ![platform & version support](https://img.shields.io/pypi/pyversions/OSRSBytes?style=for-the-badge)
 =======
 ## Production Branch
-[update20210125]
+[update20220125]
 __Added OSRS Wiki to Items module in v1.2.5__:
 * Added the OSRS Wiki API to the Items Module.
-  * Note: This API loads in many new items that may not yet have pricing info, but do contain other relevant info.
 
 [update 20210710]
 __Fixes implemented in v1.2.4__:
