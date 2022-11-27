@@ -140,16 +140,6 @@ print('Item Name:',       items.getName('1213'))
 print('Sell Average:',    items.getSellAverage('1213'))
 ```
 
-### Items Invocation with OSRS Wiki API instead.
-The OSRS Wiki's API is an alternative API source.
-```Python
-from OSRSBytes import Items
-
-items = Items('wiki')
-# OR
-items = Items(api='wiki')
-```
-
 ### Contributing
 
 Prior to contributing, please consider the following before committing code:
