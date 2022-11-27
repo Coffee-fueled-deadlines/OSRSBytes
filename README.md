@@ -1,10 +1,14 @@
-# OSRSBytes (v1.2.4)
+# OSRSBytes (v1.2.5)
 ![version](https://img.shields.io/pypi/v/OSRSBytes?style=for-the-badge)
 ![downloads](https://img.shields.io/pypi/dm/OSRSBytes?style=for-the-badge)<br>
 ![size](https://img.shields.io/github/languages/code-size/coffee-fueled-deadlines/osrsbytes?style=for-the-badge)
 ![platform & version support](https://img.shields.io/pypi/pyversions/OSRSBytes?style=for-the-badge)
 =======
 ## Production Branch
+[update20220125]
+__Added OSRS Wiki to Items module in v1.2.5__:
+* Added the OSRS Wiki API to the Items Module.
+
 [update 20210710]
 __Fixes implemented in v1.2.4__:
 * Escape username to avoid getting errors for usernames that contain spaces.
@@ -134,6 +138,16 @@ print('Low Alch Value:',  items.getLowAlchValue('rune dagger'))
 # In addition, all items can be called by Item ID as well
 print('Item Name:',       items.getName('1213'))
 print('Sell Average:',    items.getSellAverage('1213'))
+```
+
+### Items Invocation with OSRS Wiki API instead.
+The OSRS Wiki's API is an alternative API source.
+```Python
+from OSRSBytes import Items
+
+items = Items('wiki')
+# OR
+items = Items(api='wiki')
 ```
 
 ### Contributing
