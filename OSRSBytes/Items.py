@@ -76,22 +76,17 @@ class Items(object):
 		None
 	"""
 
-	def __init__(self, api="buddy"):
-		# Grand Exchange item lookup Initialization will go here
-		self.api = api
-		if self.api == "buddy":
-			req, buylims = self.__getHTTPRequestB()
-			self.itemname = self.__parseResponseByItemName(req, buylims)
-		elif self.api == 'wiki':
-			prices, volumes, mappings = self.__getHTTPRequestW()
-			self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings)
-		else:
-			raise APIDown(f'The term {api} is not supported. Please try: \'buddy\' or \'wiki\'')
+	def __init__(self, application_name = None, application_contact = None):
+		self.__application_name = application_name if application_name else "OSRSBytes"
+		self.__application_contact = application_contact if application_contact else "info@osrsbytes.com"
+
+		prices, volumes, mappings = self.__getHTTPRequest()
+		self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings)
 		if not (self.itemname):
 			raise APIDown(f'The {api} API appears to be down, please try the other')
 
-	def __getHTTPRequestW(self):
-		"""getHTTPRequestW
+	def __getHTTPRequest(self):
+		"""getHTTPRequest
 
 		This method is responsible for pulling data from runewiki API's. The
 		headers are necessary to get sucessful API requests.
@@ -103,13 +98,13 @@ class Items(object):
 			dict volumes: The latest trading volumes for items.
 			list mappings: Mappings of item info.
 		"""
+		url_mappings = 'https://prices.runescape.wiki/api/v1/osrs/mapping'
 		url_prices = 'https://prices.runescape.wiki/api/v1/osrs/latest'
 		url_volumes = 'https://prices.runescape.wiki/api/v1/osrs/volumes'
-		url_mappings = 'https://prices.runescape.wiki/api/v1/osrs/mapping'
 		headers = {
-			'User-Agent': 'OSRSBytes',
-		    'From': 'OSRSBytes@gmail.com'
-			}
+    		"User-Agent" : "{} - {}".format(self.__application_name, self.__application_contact)
+		}
+
 
 		req = urllib.request.Request(url_mappings, headers=headers)
 		f = urllib.request.urlopen(req)
@@ -124,48 +119,6 @@ class Items(object):
 		volumes = json.load(f)['data']
 
 		return prices, volumes, mappings
-
-	def __getHTTPRequestB(self):
-		"""getHTTPRequestB method
-
-		The getHTTPRequest method is responsible for establishing a request
-		with the rsbuddy API.
-
-		Args:
-			None
-
-		Returns:
-			string: API JSON Response in String format
-		"""
-		rsBuddyAPI = 'https://rsbuddy.com/exchange/summary.json'
-		osrs_wiki_buylims = 'https://oldschool.runescape.wiki/api.php?action=query&prop=revisions&rvprop=content&titles=Grand_Exchange/Buying_limits&format=json'
-
-		return urllib.request.Request(rsBuddyAPI), urllib.request.Request(osrs_wiki_buylims, headers={'User-Agent': 'Mozilla/5.0'})
-
-	def __parseBuyLimits(self, unparsedJSON):
-		"""parseBuyLimits method
-
-		The parseBuyLimits method is responsible for parsing the json data retreived from
-		the OSRS wiki page associated with buy orders.
-
-		Args:
-			unparsedJSON : dict : The unparsed json dictionary received from the osrs wiki
-
-		Returns:
-			buyLimitDict : dict : A properly parsed dictionary needed by the rest of the 
-			                      __parseResponseByItemName method.
-
-		"""
-		for i,x in unparsedJSON['query']['pages'].items():
-			buyLimitString = x['revisions'][0]
-		buyLimitString = buyLimitString['*'].replace("\n","").replace("]]","").replace("[[","")
-		buyLimitString = buyLimitString.split("|}==Changes")[0].split("|Buy limit|-|")[1]
-		buyLimitList = buyLimitString.split("|-|")
-		buyLimitDict = {}
-		for item in buyLimitList:
-			itemsplit = item.split("|")
-			buyLimitDict[itemsplit[0].lower()] = {'buy_limit':int(itemsplit[1])}
-		return buyLimitDict
 
 	def __rectifyWikiResponse(self, prices, volumes, mappings):
 		"""rectifyResponseWithMappings
@@ -211,49 +164,6 @@ class Items(object):
 		except:
 			return False
 
-	def __parseResponseByItemName(self, req, buylims):
-		"""parseResponseByItemName method
-
-		The parseResponseByItemName() method is responsible for accepting the
-		request esablished by the getHTTPRequest() method and loading it into
-		the JSON string parser to convert it to a usable python dictionary.
-
-		Once parsed, the dictionary is iterated through and a new dictionary is
-		created with identical information except the key value is replaced with
-		the item name instead of the item id.
-
-		Args:
-			req: The string request received by the getHTTPRequest() method
-
-		Returns:
-			itemDict: A dictionary of OSRS Items keyed with item names
-			boolval: Returns false on parse error
-		"""
-		r = urllib.request.urlopen(req).read()
-		try:
-			parsedJSON =  json.loads(r.decode('utf-8'))
-		except:
-			return False
-		
-		r = urllib.request.urlopen(buylims).read()
-		try:
-			unparsedBuyLims = json.loads(r.decode('utf-8'))
-			parsedBuyLims   = self.__parseBuyLimits(unparsedBuyLims)
-		except:
-			return False
-
-		# Lets make this item-set not suck
-		itemDict = {}
-		for idval in parsedJSON:
-			itemDict[parsedJSON[idval]['name'].lower()] = parsedJSON[idval]
-			try:
-				itemDict[parsedJSON[idval]['name'].lower()]['buy_limit'] = parsedBuyLims[parsedJSON[idval]['name'].lower()]['buy_limit']
-			except:
-				itemDict[parsedJSON[idval]['name'].lower()]['buy_limit'] = None
-
-		# Return the dictionary
-		return itemDict
-
 	def __normalize_input(self, itemNameOrID: str):
 		"""normalize_input method
 
@@ -281,7 +191,6 @@ class Items(object):
 			return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]
 		except KeyError:
 			raise ItemNotValid("{} is not a valid item and was not found.".format(itemNameOrID))
-
 		
 	def getName(self, itemNameOrID: str):
 		"""getName Method
