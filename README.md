@@ -1,4 +1,4 @@
-# OSRSBytes (v1.2.5)
+# OSRSBytes (v1.3.0)
 ![version](https://img.shields.io/pypi/v/OSRSBytes?style=for-the-badge)
 ![downloads](https://img.shields.io/pypi/dm/OSRSBytes?style=for-the-badge)<br>
 ![size](https://img.shields.io/github/languages/code-size/coffee-fueled-deadlines/osrsbytes?style=for-the-badge)
