@@ -147,5 +147,6 @@ Prior to contributing, please consider the following before committing code:
 1. Do not leave commented lines in code (i.e. `#print('test')`
 1. Try to write your code as cleanly and readable as possible
 1. Whenever possible, do not use third party packages, try your hardest to utilize built-in python packages
+1. No commits should break previous code functionality.  This means that method names should remain the same and return the same, expected values in the same format.
 
 Thank you for your considerations
