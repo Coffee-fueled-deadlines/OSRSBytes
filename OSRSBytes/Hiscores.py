@@ -247,6 +247,7 @@ class Hiscores(object):
 
 	def __parseDataNew(self):
 		self.stats = {}
+		self.bounties = {}
 		self.clues = {}
 		self.bosses = {}
 
@@ -306,12 +307,28 @@ class Hiscores(object):
 		self.stats[self.username] = subset
 		self.stats[self.username]['cache_ttl'] = time.time() + self.cacheTTL
 		
+		bounty_ranks = [
+			"hunter",
+			"rogue"
+		]
+
 		# Skip over unused values for most people
-		parsed_data.pop(0) # Skip over bounty hunter - hunter
-		parsed_data.pop(0) # Skip over bounty hunter - rogue
-		parsed_data.pop(0) # Skip over "other"
-		
-		clue_types = [
+		parsed_data.pop(0) # Skip over "unknown" (open issue if you know it)
+
+		subset = {}
+		for bounty in bounty_ranks:
+			for item in parsed_data:
+				info_list = item.split(",")
+				info = {}
+				info["rank"] = int(info_list[0])
+				info["score"] = int(info_list[1])
+				subset[bounty] = info
+				parsed_data.remove(item)
+				break
+
+		self.bounties[self.username] = subset
+
+		clue_tiers = [
 			"all",
 			"beginner",
 			"easy",
@@ -322,7 +339,7 @@ class Hiscores(object):
 		]
 
 		subset = {}
-		for clue in clue_types:
+		for clue in clue_tiers:
 			for item in parsed_data:
 				info_list = item.split(",")
 				info = {}
@@ -427,7 +444,7 @@ class Hiscores(object):
 		"""clue() method
 
 		The clue() method allows for users to access their clue scores
-		and ranks by providing the tier of clue they want to get ifno about
+		and ranks by providing the tier of clue they want to get info about
 
 		Args:
 			clue (str): The OSRS Clue type to get information on
@@ -445,6 +462,31 @@ class Hiscores(object):
 				return self.clues[self.username][clue.lower()][clue_type.lower()]
 		except KeyError as KE:
 			raise ClueError("ERROR: clue {} does not exist".format(KE))
+
+
+	def bounty(self, bounty, bounty_type: str = 'score'):
+		"""bounty() method
+
+		The bounty() method allows for users to access their bounty scores
+		and ranks by providing the bounty they want to get info about
+
+		Args:
+			bounty (str): The OSRS bounty type to get information on
+						  either "hunter", or "rogue"
+
+			bounty_type (str): either "rank" or "score"  If not supplied
+							 it assumes "score"
+
+		Returns:
+			self.bounties[username][bounty_tier][bounty_type] (int)
+		"""
+		try:
+			if bounty_type.lower() not in ["rank","score"]:
+				raise ClueError("clue_type must be 'rank' or 'score'")
+			else:
+				return self.bounties[self.username][bounty.lower()][bounty_type.lower()]
+		except KeyError as KE:
+			raise BountyError("ERROR: bounty {} does not exist".format(KE))
 
 	def error(self):
 		HiscoresError("Error occurred: {}".format(self.errorMsg))
