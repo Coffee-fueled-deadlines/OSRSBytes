@@ -43,6 +43,9 @@ class DoNotRunDirectly(Exception):
 class SkillError(Exception):
 	pass
 
+class ClueError(Exception):
+	pass
+
 class HiscoresError(Exception):
 	pass
 
@@ -240,23 +243,101 @@ class Hiscores(object):
 			self.error()
 		else:
 			self.data = self.response.read().decode('ascii')
-			self._parseData()
+			self.__parseDataNew()
+
+	def __parseDataNew(self):
+		self.stats = {}
+		self.clues = {}
+		self.bosses = {}
+
+		subset = {}
+		# Totals
+		info = {}
+		info['rank'] = self.data[0]
+		info['level'] = self.data[1]
+		info['experience'] = self.data[2]
+		subset['total'] = info
+
+		parsed_data = self.data.split("\n")
+		parsed_data.pop(0) # remove totals section
+
+		skills = [
+			  	'attack',
+				'defense',
+				'strength',
+				'hitpoints',
+				'ranged',
+				'prayer',
+				'magic',
+				'cooking',
+				'woodcutting',
+				'fletching',
+				'fishing',
+				'firemaking',
+				'crafting',
+				'smithing',
+				'mining',
+				'herblore',
+				'agility',
+				'thieving',
+				'slayer',
+				'farming',
+				'runecrafting',
+				'hunter',
+				'construction'
+		           ]
+
+		for skill in skills:
+			for item in parsed_data:
+				info_list = item.split(",")
+				info = {}
+				info['rank'] = int(info_list[0])
+				info['level'] = int(info_list[1])
+				info['experience'] = int(info_list[2])
+				
+				# calculate xp to next level
+				level = info['level'] + 1
+				info['next_level_exp'] = math.floor(sum((math.floor(level + 300 * (2 ** (level / 7.0))) for level in range(1, level)))/4)
+				info['exp_to_next_level'] = int(info['next_level_exp'] - info['experience'])
+				subset[skill] = info
+				parsed_data.remove(item)
+				break
+
+		self.stats[self.username] = subset
+		self.stats[self.username]['cache_ttl'] = time.time() + self.cacheTTL
+		
+		# Skip over unused values for most people
+		parsed_data.pop(0) # Skip over bounty hunter - hunter
+		parsed_data.pop(0) # Skip over bounty hunter - rogue
+		parsed_data.pop(0) # Skip over "other"
+		
+		clue_types = [
+			"all",
+			"beginner",
+			"easy",
+			"medium",
+			"hard",
+			"elite",
+			"master"
+		]
+
+		subset = {}
+		for clue in clue_types:
+			for item in parsed_data:
+				info_list = item.split(",")
+				info = {}
+				info["rank"] = int(info_list[0])
+				info["score"] = int(info_list[1])
+				subset[clue] = info
+				parsed_data.remove(item)
+				break
+
+		self.clues[self.username] = subset
+		
+		if self.caching:
+			self._cacheData()
 
 	def _parseData(self):
-		"""parseData() method
-
-		The parseData() method parses the self.data processed in the processResponse()
-		method.  Data parsed in placed in the self.stats dictionary.
-
-		Args:
-			self
-
-		Returns:
-			None
-
-		Triggers:
-			None
-		"""
 		self.data = self.data.replace('\n',',')
 		self.data = self.data.split(',')
 		subset = {}
@@ -336,11 +417,34 @@ class Hiscores(object):
 		"""
 		try:
 			if stype.lower() not in ['rank','level','experience','exp_to_next_level']:
-				SkillError("stype must be 'rank','level', or experience'")
+				raise SkillError("stype must be 'rank','level', or experience'")
 			else:
 				return self.stats[self.username][skill.lower()][stype.lower()]
 		except KeyError as KE:
-			SkillError("ERROR: skill {} does not exist".format(KE))
+			raise SkillError("ERROR: skill {} does not exist".format(KE))
+
+	def clue(self, clue, clue_type: str = 'score'):
+		"""clue() method
+
+		The clue() method allows for users to access their clue scores
+		and ranks by providing the tier of clue they want to get ifno about
+
+		Args:
+			clue (str): The OSRS Clue type to get information on
+
+			clue_type (str): either "rank" or "score"  If not supplied
+							 it assumes "score"
+
+		Returns:
+			self.clues[username][clue_tier][clue_type] (int)
+		"""
+		try:
+			if clue_type.lower() not in ["rank","score"]:
+				raise ClueError("clue_type must be 'rank' or 'score'")
+			else:
+				return self.clues[self.username][clue.lower()][clue_type.lower()]
+		except KeyError as KE:
+			raise ClueError("ERROR: clue {} does not exist".format(KE))
 
 	def error(self):
 		HiscoresError("Error occurred: {}".format(self.errorMsg))
