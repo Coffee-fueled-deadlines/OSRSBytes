@@ -257,7 +257,7 @@ class Hiscores(object):
 		info['experience'] = self.data[2]
 		subset['total'] = info
 
-		skills = [
+		self.__skills = [
 				'attack',
 				'defense',
 				'strength',
@@ -283,7 +283,7 @@ class Hiscores(object):
 				'construction'
 		]
 
-		for skill in skills:
+		for skill in self.__skills:
 			for item in self.__parsed_data:
 				info_list = item.split(",")
 				info = {}
@@ -304,12 +304,12 @@ class Hiscores(object):
 
 	def __parseBountyHunter(self):
 		subset = {}
-		bounty_ranks = [
+		self.__bounty_ranks = [
 			"hunter",
 			"rogue"
 		]
 
-		for bounty in bounty_ranks:
+		for bounty in self.__bounty_ranks:
 			for item in self.__parsed_data:
 				info_list = item.split(",")
 				info = {}
@@ -324,7 +324,7 @@ class Hiscores(object):
 
 	def __parseClues(self):
 		subset = {}
-		clue_tiers = [
+		self.__clue_tiers = [
 			"all",
 			"beginner",
 			"easy",
@@ -333,7 +333,7 @@ class Hiscores(object):
 			"elite",
 			"master"
 		]
-		for clue in clue_tiers:
+		for clue in self.__clue_tiers:
 			for item in self.__parsed_data:
 				info_list = item.split(",")
 				info = {}
@@ -350,13 +350,13 @@ class Hiscores(object):
 
 		# I partake in none of this so if someone wants to clear this up
 		# please feel free to
-		lms_arena_stuff = [
+		self.__lms_arena_stuff = [
 			"lms_rank",
 			"pvp_arena_rank",
 			"soul_wars_zeal"
 		]
 
-		for activity in lms_arena_stuff:
+		for activity in self.__lms_arena_stuff:
 			for item in self.__parsed_data:
 				info_list = item.split(",")
 				info = {}
@@ -368,12 +368,82 @@ class Hiscores(object):
 
 		self.lms_arenas_sw[self.username] = subset
 
+	def __parseBosses(self):
+		subset = {}
+
+		self.__bosses = [
+			"rifts_closed",
+			"abyssal_sire",
+			"alchemical_hydra",
+			"barrows_chests",
+			"bryophyta",
+			"callisto",
+			"cerberus",
+			"chambers_of_xeric",
+			"chambers_of_xeric_challenge",
+			"chaos_elemental",
+			"chaos_fanatic",
+			"commander_zilyana",
+			"corporeal_beast",
+			"crazy_archaeologist",
+			"dagannoth_prime",
+			"dagannoth_rex",
+			"dagannoth_supreme",
+			"deranged_archaeologist",
+			"general_graardor",
+			"giant_mole",
+			"grotesque_guardians",
+			"hesporti",
+			"kalphite_queen",
+			"king_black_dragon",
+			"kraken",
+			"kreearra",
+			"kril_tsutsaroth",
+			"mimic",
+			"nex",
+			"nightmare",
+			"phosanis_nightmare",
+			"obor",
+			"sarachnis",
+			"scorpia",
+			"skotizo",
+			"tempoross",
+			"gauntlet",
+			"corrupted_gauntlet",
+			"theatre_of_blood",
+			"theatre_of_blood_hard",
+			"thermonuclear_smoke_devil",
+			"tombs_of_amascut",
+			"tombs_of_amascut_expert",
+			"zuk",
+			"jad",
+			"venenatis",
+			"vetion",
+			"vorkath",
+			"wintertodt",
+			"zalcano",
+			"zulrah"
+		]
+
+		for boss in self.__bosses:
+			for item in self.__parsed_data:
+				info_list = item.split(",")
+				info = {}
+				info["rank"] = int(info_list[0])
+				info["score"] = int(info_list[1])
+				subset[boss] = info
+				self.__parsed_data.remove(item)
+				break
+
+		self.bosses[self.username] = subset
+
 
 	def __parseData(self):
 		self.stats = {}
 		self.bounties = {}
 		self.clues = {}
 		self.lms_arenas_sw = {}
+		self.raids = {}
 		self.bosses = {}
 
 		# Prep data for parsing
@@ -388,8 +458,7 @@ class Hiscores(object):
 		self.__parseBountyHunter()
 		self.__parseClues()
 		self.__parseLMS()
-
-		print(self.__parsed_data)
+		self.__parseBosses()
 		
 		if self.caching:
 			self._cacheData()
@@ -445,7 +514,6 @@ class Hiscores(object):
 		except KeyError as KE:
 			raise ClueError("ERROR: clue {} does not exist".format(KE))
 
-
 	def bounty(self, bounty, bounty_type: str = 'score'):
 		"""bounty() method
 
@@ -470,7 +538,7 @@ class Hiscores(object):
 		except KeyError as KE:
 			raise BountyError("ERROR: bounty {} does not exist".format(KE))
 
-	def lms_arena_sw(self, activity_type, info_type):
+	def lms_arena_sw(self, activity_type, info_type: str = 'score'):
 		try:
 			if info_type.lower() not in ["rank","score"]:
 				raise LMSArenaError("info_type must be 'rank' or 'score'")
@@ -479,8 +547,40 @@ class Hiscores(object):
 		except KeyError as KE:
 			raise LMSArenaError("ERROR: activity_type does not exist".format(KE))
 
+	def boss(self, boss_name, info_type: str = 'score'):
+		try:
+			if info_type.lower() not in ["rank","score"]:
+				raise BossError("info_type must be 'rank' or 'score'")
+			else:
+				return self.bosses[self.username][boss_name.lower()][info_type.lower()]
+		except KeyError as KE:
+			raise BossError("ERROR: boss_name does not exist")
+
 	def error(self):
 		HiscoresError("Error occurred: {}".format(self.errorMsg))
 	##########################
 	#  END: Hiscores Object  #
 	##########################
+
+	##########################
+	#  TESTING METHODS       #
+	##########################
+	def getSkillsGenerator(self):
+		for skill in self.__skills:
+			yield skill
+
+	def getPVPGenerator(self):
+		for activity in self.__lms_arena_stuff:
+			yield activity
+
+	def getClueGenerator(self):
+		for clue in self.__clue_tiers:
+			yield clue
+
+	def getBountyGenerator(self):
+		for bounty in self.__bounty_ranks:
+			yield bounty
+
+	def getBossGenerator(self):
+		for boss in self.__bosses:
+			yield boss
