@@ -2,13 +2,6 @@
 ## Begin-date: 20191230
 ## Last-Update: 20200201
 
-# OSRSBytes (v1.3.0)
-![version](https://img.shields.io/pypi/v/OSRSBytes?style=for-the-badge)
-![downloads](https://img.shields.io/pypi/dm/OSRSBytes?style=for-the-badge)<br>
-![size](https://img.shields.io/github/languages/code-size/coffee-fueled-deadlines/osrsbytes?style=for-the-badge)
-![platform & version support](https://img.shields.io/pypi/pyversions/OSRSBytes?style=for-the-badge)
-=======
-## Production Branch
 [update 20221130]
 __Updated OSRSBytes to Version 1.3.0__:
 
