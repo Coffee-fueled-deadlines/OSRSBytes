@@ -202,8 +202,15 @@ class Hiscores(object):
 
 				# calculate xp to next level
 				level = info['level'] + 1
-				info['next_level_exp'] = math.floor(sum((math.floor(level + 300 * (2 ** (level / 7.0))) for level in range(1, level)))/4)
-				info['exp_to_next_level'] = int(info['next_level_exp'] - info['experience'])
+				
+				# If 200M XP, set next level and exp to next to 0
+				if (int(info['experience']) == 200000000):
+					info['next_level_exp'] = 0
+					info['exp_to_next_level'] = 0
+				else:
+					info['next_level_exp'] = math.floor(sum((math.floor(level + 300 * (2 ** (level / 7.0))) for level in range(1, level)))/4)
+					info['exp_to_next_level'] = int(info['next_level_exp'] - info['experience'])
+					
 				subset[skill] = info
 				self.__parsed_data.remove(item)
 				break
