@@ -92,9 +92,9 @@ class Hiscores(object):
 	def __init__(self, username: str, actype='N'):
 		self.username = username.lower()
 		self.accountType = actype.upper()
-		self._getHTTPResponse()
+		self.__getHTTPResponse()
 
-	def _getHTTPResponse(self):
+	def __getHTTPResponse(self):
 		"""getHTTPResponse() method
 
 		The getHTTPResponse() method communicates with the OSRS Hiscores API
@@ -108,7 +108,7 @@ class Hiscores(object):
 			None
 
 		Triggers:
-			self.processResponse(): This method is always triggered, regardless
+			self.__processResponse(): This method is always triggered, regardless
 			                        of whether or not the query to the API returned
 						successfully or not.
 		"""
@@ -129,9 +129,9 @@ class Hiscores(object):
 			conn.request("GET", "/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player={}".format(self.username.replace(' ','%20')))
 			self.response = conn.getresponse()
 			self.status = self.response.status
-		self._processResponse()
+		self.__processResponse()
 
-	def _processResponse(self):
+	def __processResponse(self):
 		"""processResponse() method
 
 		The processResponse() method processes the response received during the
