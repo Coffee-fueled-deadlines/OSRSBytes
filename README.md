@@ -5,7 +5,10 @@
 ![platform & version support](https://img.shields.io/pypi/pyversions/OSRSBytes?style=for-the-badge)
 =======
 ## Production Branch
-[update20220125]
+[update 20221130]
+__Updated OSRSBytes to Version 1.3.0__:
+
+[update 20220125]
 __Added OSRS Wiki to Items module in v1.2.5__:
 * Added the OSRS Wiki API to the Items Module.
 
@@ -56,61 +59,6 @@ __Fixes currently implemented in v1.2.2__:
 > print("Current rank:", user.skill('attack', 'rank'))
 > print("Current exp:", user.skill('attack', 'experience'))
 > print("Exp remaining:", user.skill('attack','exp_to_next_level'))
-> ```
-> 
-> Example utilizing Caching
-> ```python
-> ###################
-> # Caching Example #
-> ###################
-> from OSRSBytes import Hiscores
-> 
-> user = Hiscores('zezima', caching=True)
->  
-> # Lets display some information
-> print("Current level:", user.skill('attack', 'level'))
-> print("Current rank:", user.skill('attack', 'rank'))
-> print("Current exp:", user.skill('attack', 'experience'))
-> print("Exp remaining:", user.skill('attack','exp_to_next_level'))
-> 
-> # Reinitializing the Hiscores class is quick now, as we already have the information cached
-> user = Hiscores('zezima', caching=True)
-> # user = Hiscores('zezima', caching=True, cacheTTL=7200) # Optional custom cacheTTL
-> 
-> print("Current level:", user.skill('attack', 'level'))
-> print("Current rank:", user.skill('attack', 'rank'))
-> print("Current exp:", user.skill('attack', 'experience'))
-> print("Exp remaining:", user.skill('attack','exp_to_next_level'))
-> 
-> # Lets get the current time left in the cache (in seconds) for Zezima
-> print("TTL for Cache: ", user.getCacheTTLRemaining()) # rounded up to nearest second
-> ```
-
-### Example Invocation (HiscoresCache)
-> The OSRSBytes library allows for you to directly manage the HiscoresCache independant of the Hiscores module.
-> ```python
-> ##############################
-> # Working with HiscoresCache #
-> ##############################
-> from OSRSBytes import HiscoresCache
-> 
-> # Initialize the cache object
-> cache = HiscoresCache()
-> 
-> # Lets clear a large number of expired users from the cache
-> cache.clearExpiredCacheEntries()
-> print(cache.purgeCounter) # Int
-> print(cache.usersDeleted) # List
-> 
-> # Lets remove a specific user from the HiscoresCache
-> if cache.removeFromCache("Zezima"):
->     print("User Removed")
-> else:
->     print("User not in cache")
-> 
-> # Lets completely destroy the cache.  Note that this method completed removes the cache files as well as the
-> # cache folder itself.
-> cache.destroyCache()
 > ```
 
 ### Example Invocation (Items)
