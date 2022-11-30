@@ -49,6 +49,9 @@ class ClueError(Exception):
 class HiscoresError(Exception):
 	pass
 
+class LMSArenaError(Exception):
+	pass	
+
 ############################
 #  Do not run if __main__  #
 ############################
@@ -243,14 +246,9 @@ class Hiscores(object):
 			self.error()
 		else:
 			self.data = self.response.read().decode('ascii')
-			self.__parseDataNew()
+			self.__parseData()
 
-	def __parseDataNew(self):
-		self.stats = {}
-		self.bounties = {}
-		self.clues = {}
-		self.bosses = {}
-
+	def __parseSkills(self):
 		subset = {}
 		# Totals
 		info = {}
@@ -259,11 +257,8 @@ class Hiscores(object):
 		info['experience'] = self.data[2]
 		subset['total'] = info
 
-		parsed_data = self.data.split("\n")
-		parsed_data.pop(0) # remove totals section
-
 		skills = [
-			  	'attack',
+				'attack',
 				'defense',
 				'strength',
 				'hitpoints',
@@ -286,48 +281,49 @@ class Hiscores(object):
 				'runecrafting',
 				'hunter',
 				'construction'
-		           ]
+		]
 
 		for skill in skills:
-			for item in parsed_data:
+			for item in self.__parsed_data:
 				info_list = item.split(",")
 				info = {}
 				info['rank'] = int(info_list[0])
 				info['level'] = int(info_list[1])
 				info['experience'] = int(info_list[2])
-				
+
 				# calculate xp to next level
 				level = info['level'] + 1
 				info['next_level_exp'] = math.floor(sum((math.floor(level + 300 * (2 ** (level / 7.0))) for level in range(1, level)))/4)
 				info['exp_to_next_level'] = int(info['next_level_exp'] - info['experience'])
 				subset[skill] = info
-				parsed_data.remove(item)
+				self.__parsed_data.remove(item)
 				break
 
 		self.stats[self.username] = subset
 		self.stats[self.username]['cache_ttl'] = time.time() + self.cacheTTL
-		
+
+	def __parseBountyHunter(self):
+		subset = {}
 		bounty_ranks = [
 			"hunter",
 			"rogue"
 		]
 
-		# Skip over unused values for most people
-		parsed_data.pop(0) # Skip over "unknown" (open issue if you know it)
-
-		subset = {}
 		for bounty in bounty_ranks:
-			for item in parsed_data:
+			for item in self.__parsed_data:
 				info_list = item.split(",")
 				info = {}
 				info["rank"] = int(info_list[0])
 				info["score"] = int(info_list[1])
 				subset[bounty] = info
-				parsed_data.remove(item)
+				self.__parsed_data.remove(item)
 				break
 
 		self.bounties[self.username] = subset
 
+
+	def __parseClues(self):
+		subset = {}
 		clue_tiers = [
 			"all",
 			"beginner",
@@ -337,78 +333,64 @@ class Hiscores(object):
 			"elite",
 			"master"
 		]
-
-		subset = {}
 		for clue in clue_tiers:
-			for item in parsed_data:
+			for item in self.__parsed_data:
 				info_list = item.split(",")
 				info = {}
 				info["rank"] = int(info_list[0])
 				info["score"] = int(info_list[1])
 				subset[clue] = info
-				parsed_data.remove(item)
+				self.__parsed_data.remove(item)
 				break
 
 		self.clues[self.username] = subset
-		
-		if self.caching:
-			self._cacheData()
 
-	def _parseData(self):
-		self.data = self.data.replace('\n',',')
-		self.data = self.data.split(',')
+	def __parseLMS(self):
 		subset = {}
 
-		# Totals
-		info = {}
-		info['rank']       = self.data[0]
-		info['level']      = self.data[1]
-		info['experience'] = self.data[2]
-		subset['total']    = info
+		# I partake in none of this so if someone wants to clear this up
+		# please feel free to
+		lms_arena_stuff = [
+			"lms_rank",
+			"pvp_arena_rank",
+			"soul_wars_zeal"
+		]
 
-		skills = [
-			  	'attack',
-		          'defense',
-		          'strength',
-		          'hitpoints',
-		          'ranged',
-		          'prayer',
-		          'magic',
-		          'cooking',
-		          'woodcutting',
-		          'fletching',
-		          'fishing',
-		          'firemaking',
-		          'crafting',
-		          'smithing',
-		          'mining',
-		          'herblore',
-		          'agility',
-		          'thieving',
-		          'slayer',
-		          'farming',
-		          'runecrafting',
-		          'hunter',
-		          'construction'
-		           ]
-		counter = 0
-		for i in range(len(skills)):
-			info = {}
-			info['rank']       = int(self.data[counter+3])
-			info['level']      = int(self.data[counter+4])
-			info['experience'] = int(self.data[counter+5])
-			level = int(info['level']+1)
-			info['next_level_exp'] = math.floor(sum((math.floor(level + 300 * (2 ** (level / 7.0))) for level in range(1, level)))/4)
-			info['exp_to_next_level'] = int(info['next_level_exp'] - info['experience'])
-			subset[skills[i]] = info
-			counter += 3
+		for activity in lms_arena_stuff:
+			for item in self.__parsed_data:
+				info_list = item.split(",")
+				info = {}
+				info["rank"] = int(info_list[0])
+				info["score"] = int(info_list[1])
+				subset[activity] = info
+				self.__parsed_data.remove(item)
+				break
 
-		# set stats dictionary
+		self.lms_arenas_sw[self.username] = subset
+
+
+	def __parseData(self):
 		self.stats = {}
-		self.stats[self.username] = subset
-		self.stats[self.username]['cache_ttl'] = time.time() + self.cacheTTL
+		self.bounties = {}
+		self.clues = {}
+		self.lms_arenas_sw = {}
+		self.bosses = {}
 
-		# Check for caching
+		# Prep data for parsing
+		self.__parsed_data = self.data.split("\n")
+		self.__parsed_data.pop(0) # remove totals section
+
+		self.__parseSkills()
+
+		# Skip over unused values for most people
+		self.__parsed_data.pop(0) # Skip over "unknown" (open issue if you know it)
+
+		self.__parseBountyHunter()
+		self.__parseClues()
+		self.__parseLMS()
+
+		print(self.__parsed_data)
+		
 		if self.caching:
 			self._cacheData()
 
@@ -482,11 +464,20 @@ class Hiscores(object):
 		"""
 		try:
 			if bounty_type.lower() not in ["rank","score"]:
-				raise ClueError("clue_type must be 'rank' or 'score'")
+				raise BountyError("bounty_type must be 'rank' or 'score'")
 			else:
 				return self.bounties[self.username][bounty.lower()][bounty_type.lower()]
 		except KeyError as KE:
 			raise BountyError("ERROR: bounty {} does not exist".format(KE))
+
+	def lms_arena_sw(self, activity_type, info_type):
+		try:
+			if info_type.lower() not in ["rank","score"]:
+				raise LMSArenaError("info_type must be 'rank' or 'score'")
+			else:
+				return self.lms_arenas_sw[self.username][activity_type.lower()][info_type.lower()]
+		except KeyError as KE:
+			raise LMSArenaError("ERROR: activity_type does not exist".format(KE))
 
 	def error(self):
 		HiscoresError("Error occurred: {}".format(self.errorMsg))
