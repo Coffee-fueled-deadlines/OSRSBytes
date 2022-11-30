@@ -8,18 +8,12 @@ EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENS
 
 Hiscores Module is responsible for fetching and parsing player skill levels and scores from the OSRS API.
 Changes that involve modifications to player based information should go in the Hiscores Module.
-
-Note: This Module utilizes the secure.runescape.com api and response time is VERY slow sometimes.  I recommend using
-the OSRSBytes' built in caching method (check the ReadMe on Github) or homebrew your own caching method into whatever
-script you're creating.  It's possible that repetetive, rapid calls to the API with the same username may result in
-throttling or IP Banning the script that's making these API Calls.  Caching is highly recommended regardless.
 """
 
 # Generic/Built-in Imports
 import http.client
 import math
 import os
-import shelve
 import time
 
 from OSRSBytes.Utilities import Utilities
@@ -51,6 +45,9 @@ class HiscoresError(Exception):
 
 class LMSArenaError(Exception):
 	pass	
+
+class BossError(Exception):
+	pass
 
 ############################
 #  Do not run if __main__  #
@@ -92,97 +89,10 @@ class Hiscores(object):
 		account = Hiscores('Zezima', 'N')
 		print(account.stats['attack']['level']) # displays attack level
 	"""
-	def __init__(self, username: str, actype='N', caching: bool=False, cacheTTL: int=3600, force_cache_update: bool=False):
+	def __init__(self, username: str, actype='N'):
 		self.username = username.lower()
 		self.accountType = actype.upper()
-
-		# Set caching variable
-		self.caching = caching
-
-		# Store TTL for Cache in seconds
-		self.cacheTTL = cacheTTL
-
-		# Check if caching
-		if self.caching and not force_cache_update:
-			# Check if cache needs to be updated
-			if self._checkCache():
-				# Cache is expired, continue with Connection
-				self._getHTTPResponse()
-			else:
-				self._fetchCacheAndSetStats()
-		elif self.caching and force_cache_update:
-			self._getHTTPResponse()
-		else:
-			# Caching disabled, continue with Connection
-			self._getHTTPResponse()
-
-	def _checkCache(self):
-		"""_checkCache Method
-
-		The _checkCache method is used by the class to determine whether or not the HiscoresCache needs to be
-		updated for the user specified in object initialization.  On returning True, cache is updated.  On
-		returning False, cache is not updated.
-		"""
-		if os.path.exists( Utilities().__package_dir__ + "/cache/hiscores.shelve.dat" ):
-			tempSkills = shelve.open( Utilities().__package_dir__ + "/cache/hiscores.shelve" )
-			try:
-				tempSkills[self.username]
-				if tempSkills[self.username]['cache_ttl'] > time.time():
-					# If cache_ttl is greater than current timestamp, cache is still valid
-					return False
-				else:
-					# If cache_ttl is less than or equal to current timestamp, cache is expired
-					return True
-
-			except KeyError:
-				# Username is not present in cache, user needs to be cached
-				return True
-
-			finally:
-				# Close the shelve
-				tempSkills.close()
-
-		# If cache hasn't been built yet, cache needs to be updated
-		return True
-
-	def _cacheData(self):
-		"""_cacheData Method
-
-		The _cacheData method is used by the class to create/update the cache with the Hiscores information
-		retrieved on the specific user.  Cache is stored by username in one file.  This means that the HiscoresCache
-		file will contain Cache on ALL users queried ever.
-		"""
-		if not os.path.exists( Utilities().__package_dir__ + "/cache/"):
-			os.mkdir( Utilities().__package_dir__ + "/cache/")
-		try:
-			HiscoresCache = shelve.open( Utilities().__package_dir__ + "/cache/hiscores.shelve" )
-			HiscoresCache.update(self.stats)
-
-		except Exception as e:
-			raise Exception(e)
-
-		finally:
-			HiscoresCache.close()
-
-	def _fetchCacheAndSetStats(self):
-		try:
-			HiscoresCache = shelve.open( Utilities().__package_dir__ + "/cache/hiscores.shelve" )
-			self.stats = dict(HiscoresCache)
-
-		except Exception as e:
-			raise Exception(e)
-
-		finally:
-			HiscoresCache.close()
-
-	def getCacheTTLRemaining(self):
-		try:
-			HiscoresCache = shelve.open( Utilities().__package_dir__ + "/cache/hiscores.shelve" )
-			return math.ceil(HiscoresCache[self.username]['cache_ttl'] - time.time())
-		except Exception as e:
-			return Exception(e)
-		finally:
-			HiscoresCache.close()
+		self._getHTTPResponse()
 
 	def _getHTTPResponse(self):
 		"""getHTTPResponse() method
@@ -300,7 +210,6 @@ class Hiscores(object):
 				break
 
 		self.stats[self.username] = subset
-		self.stats[self.username]['cache_ttl'] = time.time() + self.cacheTTL
 
 	def __parseBountyHunter(self):
 		subset = {}
@@ -459,9 +368,6 @@ class Hiscores(object):
 		self.__parseClues()
 		self.__parseLMS()
 		self.__parseBosses()
-		
-		if self.caching:
-			self._cacheData()
 
 
 	def skill(self, skill, stype: str = 'level'):
