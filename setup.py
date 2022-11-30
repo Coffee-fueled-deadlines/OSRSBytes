@@ -13,6 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Coffee-fueled-deadlines/OSRSBytes",
     packages=setuptools.find_packages(),
+    # package_data={"OSRSBytes": ["modules/*"]}, # This will be included soon
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
