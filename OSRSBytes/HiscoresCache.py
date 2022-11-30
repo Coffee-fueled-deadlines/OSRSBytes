@@ -24,12 +24,11 @@ import time
 from OSRSBytes.Utilities import Utilities
 
 # META Data
-__author__     = 'Markis Cook'
-__copyright__  = 'Copyright 2019, Markis H. Cook'
-__credits__    = ['Markis Cook (Lead Programmer, Creator)']
+__copyright__  = 'Copyright 2022, CFDeadlines'
+__credits__    = ['CFDeadlines (Lead Programmer, Creator)']
 __license__    = 'EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)'
 __version__    = '1.3.0'
-__maintainer__ = 'Markis Cook'
+__maintainer__ = 'CFDeadlines'
 __email__      = 'cookm0803@gmail.com'
 __status__     = 'Deprecated'
 
