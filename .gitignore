@@ -107,3 +107,5 @@ venv.bak/
 readme.md
 .readme.md
 hiscores_test.py
+setup.py
+.setup.py
