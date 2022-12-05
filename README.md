@@ -40,45 +40,44 @@
 > ```
 
 ### Example Invocation (Items)
-```python
-
-from OSRSBytes import Items
-
-items = Items()
-
-# Lets get information on this item
-print('Is Members:',    items.isMembers('rune dagger'))
-print("Item ID:",         items.getItemID('rune dagger'))
-    
-print('Sell Average:',  items.getSellAverage('rune dagger'))
-print('Sell Quantity:', items.getSellQuantity('rune dagger'))
-
-print('Buy Average:',  items.getBuyAverage('rune dagger'))
-print('Buy Quantity:', items.getBuyQuantity('rune dagger'))
-print('Buy Limit:',    items.getBuyLimit('fire rune'))
-
-print('Shop Price:',      items.getShopPrice('rune dagger'))
-print('High Alch Value:', items.getHighAlchValue('rune dagger'))
-print('Low Alch Value:',  items.getLowAlchValue('rune dagger'))
-
-# In addition, all items can be called by Item ID as well
-print('Item Name:',       items.getName('1213'))
-print('Sell Average:',    items.getSellAverage('1213'))
-
-# Lets update all of the item information after some time has passed
-items.update()
-
-# Lets get some new, up-to-date information
-print('Sell Average:', items.getSellAverage('rune dagger')
-```
+> ```python
+> 
+> from OSRSBytes import Items
+> 
+> items = Items()
+> 
+> # Lets get information on this item
+> print('Is Members:',    items.isMembers('rune dagger'))
+> print("Item ID:",         items.getItemID('rune dagger'))
+>     
+> print('Sell Average:',  items.getSellAverage('rune dagger'))
+> print('Sell Quantity:', items.getSellQuantity('rune dagger'))
+> 
+> print('Buy Average:',  items.getBuyAverage('rune dagger'))
+> print('Buy Quantity:', items.getBuyQuantity('rune dagger'))
+> print('Buy Limit:',    items.getBuyLimit('fire rune'))
+> 
+> print('Shop Price:',      items.getShopPrice('rune dagger'))
+> print('High Alch Value:', items.getHighAlchValue('rune dagger'))
+> print('Low Alch Value:',  items.getLowAlchValue('rune dagger'))
+> 
+> # In addition, all items can be called by Item ID as well
+> print('Item Name:',       items.getName('1213'))
+> print('Sell Average:',    items.getSellAverage('1213'))
+> 
+> # Lets update all of the item information after some time has passed
+> items.update()
+> 
+> # Lets get some new, up-to-date information
+> print('Sell Average:', items.getSellAverage('rune dagger')
+> ```
 
 ### Contributing
-
-Prior to contributing, please consider the following before committing code:
-
-1. Do not leave commented lines in code (i.e. `#print('test')`
-1. Try to write your code as cleanly and readable as possible
-1. Whenever possible, do not use third party packages, try your hardest to utilize built-in python packages
-1. No commits should break previous code functionality.  This means that method names should remain the same and return the same, expected values in the same format.
-
-Thank you for your considerations
+> Prior to contributing, please consider the following before committing code:
+> 
+> 1. Do not leave commented lines in code (i.e. `#print('test')`
+> 1. Try to write your code as cleanly and readable as possible
+> 1. Whenever possible, do not use third party packages, try your hardest to utilize built-in python packages
+> 1. No commits should break previous code functionality.  This means that method names should remain the same and return the same, expected values in the same format.
+> 
+> Thank you for your considerations
