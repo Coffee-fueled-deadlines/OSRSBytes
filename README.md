@@ -64,6 +64,12 @@ print('Low Alch Value:',  items.getLowAlchValue('rune dagger'))
 # In addition, all items can be called by Item ID as well
 print('Item Name:',       items.getName('1213'))
 print('Sell Average:',    items.getSellAverage('1213'))
+
+# Lets update all of the item information after some time has passed
+items.update()
+
+# Lets get some new, up-to-date information
+print('Sell Average:', items.getSellAverage('rune dagger')
 ```
 
 ### Contributing
