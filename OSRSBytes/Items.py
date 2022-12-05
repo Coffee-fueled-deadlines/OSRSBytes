@@ -86,7 +86,7 @@ class Items(object):
 		self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings) # Why did I name you this way?
 		self.item_dict = self.__rectifyWikiResponse(prices, volumes, mappings)
 		if not (self.item_dict):
-			raise APIDown(f'The {api} API appears to be down, please try the other')
+			raise APIDown(f'The API appears to be down, please try the other')
 
 	def __getHTTPRequest(self):
 		"""getHTTPRequest
@@ -298,7 +298,7 @@ class Items(object):
 		self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings) # Why did I name you this way?
 		self.item_dict = self.__rectifyWikiResponse(prices, volumes, mappings)
 		if not (self.item_dict):
-			raise APIDown(f'The {api} API appears to be down, please try the other')
+			raise APIDown(f'The API appears to be down, please try the other')
 	##########################
 	#  END: Items Object     #
 	##########################
