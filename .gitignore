@@ -104,6 +104,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-
+readme.md
 .readme.md
 hiscores_test.py
