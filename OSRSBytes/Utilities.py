@@ -28,7 +28,4 @@ class Utilities(object):
 		self.getLocation()
 
 	def getLocation(self):
-		self.__package_dir__ = os.path.dirname(os.path.realpath(__file__))
-		self.__here__ = self.__package_dir__
-		self.__this__ = self.__here__
-		self.__script__ = self.__this__		
+		self.__package_dir__, self.__here__, self.__this__, self.__script__ = os.path.dirname(os.path.realpath(__file__))
