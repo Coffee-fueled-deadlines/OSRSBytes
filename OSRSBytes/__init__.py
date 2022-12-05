@@ -15,10 +15,13 @@ from OSRSBytes.Utilities import *
 
 # META Data
 __copyright__  = 'Copyright 2022, CFDeadlines'
-__credits__    = ['CFDeadlines (Lead Programmer, Creator)']
+__credits__    = ['CFDeadlines (Lead Programmer, Creator)', 'Riley Fitzgibbons (Contributor)']
 __license__    = 'EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)'
 __version__    = '1.3.0'
-__maintainer__ = 'CFDeadlines'
+__maintainer__ = {
+		'CFDeadlines': 'cookm0803@gmail.com',
+		'Riley Fitz': "rileyfitzgibbons@gmail.com"
+	}
 __email__      = 'cookm0803@gmail.com'
 __status__     = 'Open'
 
