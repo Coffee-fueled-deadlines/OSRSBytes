@@ -83,8 +83,9 @@ class Items(object):
 		self.__application_contact = application_contact if application_contact else "info@osrsbytes.com"
 
 		prices, volumes, mappings = self.__getHTTPRequest()
-		self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings)
-		if not (self.itemname):
+		self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings) # Why did I name you this way?
+		self.item_dict = self.__rectifyWikiResponse(prices, volumes, mappings)
+		if not (self.item_dict):
 			raise APIDown(f'The {api} API appears to be down, please try the other')
 
 	def __getHTTPRequest(self):
@@ -190,7 +191,7 @@ class Items(object):
 		all item information.
 		"""
 		try:
-			return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]
+			return self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]
 		except KeyError:
 			raise ItemNotValid("{} is not a valid item and was not found.".format(itemNameOrID))
 		
@@ -200,7 +201,7 @@ class Items(object):
 		The getName method, when supplied an Item Name or Item ID, returns a string value containing
 		the in-game name of the Item.
 		"""
-		for itemid, x in self.itemname.items():
+		for itemid, x in self.item_dict.items():
 			if str(x['id']) == str(itemNameOrID) or str(x['name']).lower() == str(itemNameOrID):
 				return x['name'].lower()
 
@@ -210,7 +211,7 @@ class Items(object):
 		The getItemID method, when supplied an Item Name or Item ID, returns a string value containing
 		the Item ID of the Item.
 		"""
-		return self.itemname[str(itemNameOrID).lower()]['id']
+		return self.item_dict[str(itemNameOrID).lower()]['id']
 
 	def getBuyAverage(self, itemNameOrID: str):
 		"""getBuyAverage Method
@@ -218,7 +219,7 @@ class Items(object):
 		The getBuyAverage method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current in-game buy value.
 		"""
-		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['buy_average']
+		return self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['buy_average']
 
 	def getSellAverage(self, itemNameOrID: str):
 		"""getSellAverage Method
@@ -226,7 +227,7 @@ class Items(object):
 		The getSellAverage method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current in-game sell value.		
 		"""
-		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sell_average']
+		return self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['sell_average']
 
 	def getBuyQuantity(self, itemNameOrID: str):
 		"""getBuyQuantity Method
@@ -234,7 +235,7 @@ class Items(object):
 		The getBuyQuantity method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current number of in-game buy orders.
 		"""
-		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['buy_quantity']
+		return self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['buy_quantity']
 
 	def getSellQuantity(self, itemNameOrID: str):
 		"""getSellQuantity Method
@@ -242,7 +243,7 @@ class Items(object):
 		The getSellQuantity method, when supplied an Item Name or Item ID, returns an integer value containing
 		the Item's current number of in-game sell orders.
 		"""		
-		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sell_quantity']
+		return self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['sell_quantity']
 		
 	def getBuyLimit(self, itemNameOrID: str):
 		"""getBuyLimit Method
@@ -251,7 +252,7 @@ class Items(object):
 		the Grand Exchange Buy Limit for that item.  If a buy limit is not found, this method returns None
 		"""
 		try:
-			return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['buy_limit']
+			return self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['buy_limit']
 		except:
 			return False
 
@@ -261,7 +262,7 @@ class Items(object):
 		The getShopPrice method, when supplied an Item Name or Item ID, returns an integer value containing
 		the in-game item's shop price
 		"""
-		return self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sp']
+		return self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['sp']
 
 	def getLowAlchValue(self, itemNameOrID: str):
 		"""getLowAlchValue Method
@@ -269,7 +270,7 @@ class Items(object):
 		The getLowAlchValue method, when supplied an Item Name or Item ID, returns an integer value containing
 		the coin return value of casting Low Alchemy on the in-game item.
 		"""
-		return math.ceil(self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sp']*.40)
+		return math.ceil(self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['sp']*.40)
 
 	def getHighAlchValue(self, itemNameOrID: str):
 		"""getHighAlchValue Method
@@ -277,7 +278,7 @@ class Items(object):
 		The getHighAlchValue method, when supplied an Item Name or Item ID, returns an integer value containing
 		the coin return value of casting High Alchemy on the in-game item.		
 		"""
-		return math.ceil(self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['sp']*.60)
+		return math.ceil(self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['sp']*.60)
 
 	def isMembers(self, itemNameOrID: str):
 		"""isMembers Method
@@ -285,7 +286,7 @@ class Items(object):
 		The isMembers method, when supplied with an Item Name or Item ID, returns a boolean value dependant
 		on whether the supplied item is Members Only or not.
 		"""
-		return bool(self.itemname[self.__normalize_input(str(itemNameOrID).lower())]['members'])
+		return bool(self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['members'])
 	##########################
 	#  END: Items Object     #
 	##########################
