@@ -22,9 +22,6 @@
 > The OSRSBytes library contains caching on Hiscores to improve performance.  Caching is disabled by default and must be enabled when initializing the hiscores object.  Note that default TTL of cache is `3600` seconds or `1` hour.
 > Example without Caching
 > ```python
-> ######################
-> # No Caching Example #
-> ######################
 > from OSRSBytes import Hiscores
 > 
 > user = Hiscores('Zezima')
