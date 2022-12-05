@@ -403,14 +403,14 @@ class Hiscores(object):
 		except KeyError as KE:
 			raise SkillError("ERROR: skill {} does not exist".format(KE))
 
-	def clue(self, clue, clue_type: str = 'score'):
+	def clue(self, clue_tier, clue_type: str = 'score'):
 		"""clue() method
 
 		The clue() method allows for users to access their clue scores
 		and ranks by providing the tier of clue they want to get info about
 
 		Args:
-			clue (str): The OSRS Clue type to get information on
+			clue_tier (str): The OSRS Clue tier to get information on
 
 			clue_type (str): either "rank" or "score"  If not supplied
 							 it assumes "score"
@@ -422,7 +422,7 @@ class Hiscores(object):
 			if clue_type.lower() not in ["rank","score"]:
 				raise ClueError("clue_type must be 'rank' or 'score'")
 			else:
-				return self.clues[self.username][clue.lower()][clue_type.lower()]
+				return self.clues[self.username][clue_tier.lower()][clue_type.lower()]
 		except KeyError as KE:
 			raise ClueError("ERROR: clue {} does not exist".format(KE))
 
