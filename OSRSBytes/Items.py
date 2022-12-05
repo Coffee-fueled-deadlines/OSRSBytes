@@ -287,6 +287,18 @@ class Items(object):
 		on whether the supplied item is Members Only or not.
 		"""
 		return bool(self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['members'])
+	
+	def update(self):
+		"""update Method
+		
+		The update method updates the item information in the object that it is called from and
+		prevents the need to reinitialize/recreate the Items object.
+		"""
+		prices, volumes, mappings = self.__getHTTPRequest()
+		self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings) # Why did I name you this way?
+		self.item_dict = self.__rectifyWikiResponse(prices, volumes, mappings)
+		if not (self.item_dict):
+			raise APIDown(f'The {api} API appears to be down, please try the other')
 	##########################
 	#  END: Items Object     #
 	##########################
