@@ -34,6 +34,9 @@
 > 
 > # Lets display some Boss information
 > print("Wintertodt Kills:", user.boss("wintertodt", "score"))
+> 
+> # Lets display some Clue Hiscores
+> print("Medium clues done:", user.clue("medium", "score"))
 > ```
 
 ### Example Invocation (Items)
