@@ -141,28 +141,28 @@ class Items(object):
 		rect = {}
 		try:
 			for item in mappings:
-			    item['name'] = item['name'].lower() # Normalize itemnames
-			    rect[item['name']] = {}
-			    rect[item['name']]['name'] = item['name']
-			    rect[item['name']]['id'] = item['id']
-			    rect[item['name']]['members'] = item['members']
-			    rect[item['name']]['examine'] = item['examine']
-			    if 'limit' in item:
-			        rect[item['name']]['buy_limit'] = item['limit']
-			    if 'lowalch' in item:
-			        rect[item['name']]['lowalch'] = item['lowalch']
-			    if 'highalch' in item:
-			        rect[item['name']]['highalch'] = item['highalch']
-			    if 'value' in item:
-			        rect[item['name']]['sp'] = item['value']
+				item['name'] = item['name'].lower() # Normalize itemnames
+				rect[item['name']] = {}
+				rect[item['name']]['name'] = item['name']
+				rect[item['name']]['id'] = item['id']
+				rect[item['name']]['members'] = item['members']
+				rect[item['name']]['examine'] = item['examine']
+				if 'limit' in item:
+					rect[item['name']]['buy_limit'] = item['limit']
+				if 'lowalch' in item:
+					rect[item['name']]['lowalch'] = item['lowalch']
+				if 'highalch' in item:
+					rect[item['name']]['highalch'] = item['highalch']
+				if 'value' in item:
+					rect[item['name']]['sp'] = item['value']
 
 			for item in rect:
-			    if str(rect[item]['id']) in volumes:
-			        rect[item]['buy_quantity'] = volumes[str(rect[item]['id'])]
-			        rect[item]['sell_quantity'] = volumes[str(rect[item]['id'])]
-			    if str(rect[item]['id']) in prices:
-			        rect[item]['buy_average'] = prices[str(rect[item]['id'])]['high']
-			        rect[item]['sell_average'] = prices[str(rect[item]['id'])]['low']
+				if str(rect[item]['id']) in volumes:
+					rect[item]['buy_quantity'] = volumes[str(rect[item]['id'])]
+					rect[item]['sell_quantity'] = volumes[str(rect[item]['id'])]
+				if str(rect[item]['id']) in prices:
+					rect[item]['buy_average'] = prices[str(rect[item]['id'])]['high']
+					rect[item]['sell_average'] = prices[str(rect[item]['id'])]['low']
 			return rect
 		except:
 			return False
