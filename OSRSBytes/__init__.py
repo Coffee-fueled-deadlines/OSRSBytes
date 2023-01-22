@@ -9,7 +9,6 @@ EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENS
 
 # Initialize OSRSBytes Modules
 from OSRSBytes.Hiscores import *
-from OSRSBytes.HiscoresCache import *
 from OSRSBytes.Items import *
 from OSRSBytes.Utilities import *
 
