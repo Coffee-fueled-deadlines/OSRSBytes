@@ -84,7 +84,7 @@ class Items(object):
 
         prices, volumes, mappings = self.__getHTTPRequest()
         self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings) # Why did I name you this way?
-        self.item_dict self.itemname
+        self.item_dict = self.itemname
         if not (self.item_dict):
             raise APIDown(f'The API appears to be down, please try the other')
 
