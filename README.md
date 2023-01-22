@@ -79,5 +79,7 @@
 > 1. Try to write your code as cleanly and readable as possible
 > 1. Whenever possible, do not use third party packages, try your hardest to utilize built-in python packages
 > 1. No commits should break previous code functionality.  This means that method names should remain the same and return the same, expected values in the same format.
+> 1. **NEW**: All code should be intended with spaces rather than tabs.
+> 1. **NEW**: All code should be pushed to dev branch instead of master branch.  All pull requests sent to master will be rejected.
 > 
 > Thank you for your considerations
