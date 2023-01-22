@@ -69,7 +69,7 @@
 > items.update()
 > 
 > # Lets get some new, up-to-date information
-> print('Sell Average:', items.getSellAverage('rune dagger')
+> print('Sell Average:', items.getSellAverage('rune dagger'))
 > ```
 
 ### Contributing
