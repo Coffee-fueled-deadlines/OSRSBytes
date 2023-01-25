@@ -1,4 +1,4 @@
-from OSRSBytes import *
+from OSRSBytes import Items
 
 def test(verbose = False):
     items = Items()

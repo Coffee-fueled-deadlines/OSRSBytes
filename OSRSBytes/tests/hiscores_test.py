@@ -1,4 +1,4 @@
-from OSRSBytes import *
+from OSRSBytes import Hiscores
 
 def test(verbose = True):
     pvp_user = Hiscores("C Engineer")
