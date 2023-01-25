@@ -52,6 +52,9 @@ class LMSArenaError(Exception):
 class BossError(Exception):
     pass
 
+class BountyError(Exception):
+    pass
+
 ############################
 #  Do not run if __main__  #
 ############################
