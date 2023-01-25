@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='OSRSBytes',  
+    name='OSRSBytes_Dev',  
     version='1.3.0',
     author="Coffee Fueled Deadlines",
     author_email="cookm0803@gmail.com",
@@ -13,7 +13,6 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Coffee-fueled-deadlines/OSRSBytes",
     packages=setuptools.find_packages(),
-    # package_data={"OSRSBytes": ["modules/*"]}, # This will be included soon
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
