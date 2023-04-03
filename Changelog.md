@@ -1,9 +1,16 @@
 # OSRSBytes ChangeLog
 ## Begin-date: 20191230
-## Last-Update: 20200201
+## Last-Update: 20230403
+
+[update 20230403]
+_Updated OSRSBytes to Version 1.3.1__:
+* Implemented `Update()` functionality to `Items.py` as requested in Issue #(37)[https://github.com/Coffee-fueled-deadlines/OSRSBytes/issues/37]
+* Implemented `phantom_muspah` to `Hiscores.py`, fixing issue stated in Issue #(38)[https://github.com/Coffee-fueled-deadlines/OSRSBytes/issues/38]
+* Fixed bug with pulling overall levels that suffered from a parsing error as mentioned in Issue #(31)[https://github.com/Coffee-fueled-deadlines/OSRSBytes/issues/31]
 
 [update 20221130]
 __Updated OSRSBytes to Version 1.3.0__:
+* Added many things and apparently failed to put them here (Sorry)
 
 [update 20220125]
 __Added OSRS Wiki to Items module in v1.2.5__:
