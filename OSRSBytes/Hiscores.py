@@ -22,7 +22,7 @@ from OSRSBytes.Utilities import Utilities
 __copyright__  = 'Copyright 2023, CFDeadlines'
 __credits__    = ['CFDeadlines (Lead Programmer, Creator)', 'Riley Fitzgibbons (Contributor)']
 __license__    = 'EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)'
-__version__    = '1.3.0'
+__version__    = '1.3.1'
 __maintainer__ = {
         'CFDeadlines': 'cookm0803@gmail.com',
         'Riley Fitz': "rileyfitzgibbons@gmail.com"
@@ -334,6 +334,7 @@ class Hiscores(object):
             "nightmare",
             "phosanis_nightmare",
             "obor",
+            "phantom_muspah",
             "sarachnis",
             "scorpia",
             "skotizo",
