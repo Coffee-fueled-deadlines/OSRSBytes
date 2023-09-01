@@ -236,7 +236,9 @@ class Hiscores(object):
         subset = {}
         self.__bounty_ranks = [
             "hunter",
-            "rogue"
+            "rogue",
+            "hunter_legacy",
+            "rogue_legacy"
         ]
 
         for bounty in self.__bounty_ranks:
@@ -298,66 +300,35 @@ class Hiscores(object):
 
         self.lms_arenas_sw[self.username] = subset
 
+    def __getBossList(self):
+        """__getBossList() method
+    
+        This method functions by getting the HTML of the actual OSRS stat page for a
+        specific user and under a specific category and table type that'll show all
+        bosses as they are added.  This, in itself, should eliminate the need to 
+        manually update bosses.  
+        """
+        uri = "secure.runescape.com"
+        endpoint = "/m=hiscore_oldschool/overall?category_type=1&table=16&user=hanannie"
+        conn = http.client.HTTPSConnection(uri)
+        conn.request("GET", endpoint)
+        response = conn.getresponse()
+        response = str(response.read())
+        split_response = response.split('<span style="color: #d9c27e;display: block;text-align: center;">----</span>')[1]
+        split_response = split_response.split("</div>")[0]
+        boss_list_unsanitized = split_response.split("\\n")
+        boss_list_unsanitized = boss_list_unsanitized[15:]
+        bosses = []
+        for boss in boss_list_unsanitized:
+            if boss:
+                bosses.append(boss.split("activity-link ",1)[1].split("\">",1)[0])
+        return bosses
+
+
     def __parseBosses(self):
         subset = {}
 
-        self.__bosses = [
-            "rifts_closed",
-            "abyssal_sire",
-            "alchemical_hydra",
-            "artio",
-            "barrows_chests",
-            "bryophyta",
-            "callisto",
-            "calvar'ion",
-            "cerberus",
-            "chambers_of_xeric",
-            "chambers_of_xeric_challenge",
-            "chaos_elemental",
-            "chaos_fanatic",
-            "commander_zilyana",
-            "corporeal_beast",
-            "crazy_archaeologist",
-            "dagannoth_prime",
-            "dagannoth_rex",
-            "dagannoth_supreme",
-            "deranged_archaeologist",
-            "general_graardor",
-            "giant_mole",
-            "grotesque_guardians",
-            "hesporti",
-            "kalphite_queen",
-            "king_black_dragon",
-            "kraken",
-            "kreearra",
-            "kril_tsutsaroth",
-            "mimic",
-            "nex",
-            "nightmare",
-            "phosanis_nightmare",
-            "obor",
-            "phantom_muspah",
-            "sarachnis",
-            "scorpia",
-            "skotizo",
-            "spindel",
-            "tempoross",
-            "gauntlet",
-            "corrupted_gauntlet",
-            "theatre_of_blood",
-            "theatre_of_blood_hard",
-            "thermonuclear_smoke_devil",
-            "tombs_of_amascut",
-            "tombs_of_amascut_expert",
-            "zuk",
-            "jad",
-            "venenatis",
-            "vetion",
-            "vorkath",
-            "wintertodt",
-            "zalcano",
-            "zulrah"
-        ]
+        self.__bosses = self.__getBossList()
 
         for boss in self.__bosses:
             for item in self.__parsed_data:
@@ -388,6 +359,7 @@ class Hiscores(object):
 
         # Skip over unused values for most people
         self.__parsed_data.pop(0) # Skip over "unknown" (open issue if you know it)
+        self.__parsed_data.pop(0) # Needed to add another of these for some reason?
 
         self.__parseBountyHunter()
         self.__parseClues()
