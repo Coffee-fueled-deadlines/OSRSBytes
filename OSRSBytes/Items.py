@@ -19,7 +19,7 @@ import urllib.request
 __copyright__  = 'Copyright 2023, CFDeadlines'
 __credits__    = ['CFDeadlines (Lead Programmer, Creator)', 'Riley Fitzgibbons (Contributor)']
 __license__    = 'EPL-2.0 (https://github.com/Coffee-fueled-deadlines/OSRSBytes/blob/master/LICENSE)'
-__version__    = '1.3.1'
+__version__    = '1.3.2'
 __maintainer__ = {
         'CFDeadlines': 'cookm0803@gmail.com',
         'Riley Fitz': "rileyfitzgibbons@gmail.com"
