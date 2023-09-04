@@ -1,6 +1,10 @@
 # OSRSBytes ChangeLog
 ## Begin-date: 20191230
-## Last-Update: 20230403
+## Last-Update: 20230903
+
+[update 20230903]
+_Updated OSRSBytes to Version 1.3.2__:
+* Implemented a new method of grabbing boss names from the osrs web page that will, hopefully, not require us to manually update the bosses list every time.
 
 [update 20230403]
 _Updated OSRSBytes to Version 1.3.1__:
