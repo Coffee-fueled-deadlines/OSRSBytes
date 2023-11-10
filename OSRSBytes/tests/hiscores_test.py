@@ -7,8 +7,14 @@ def test(verbose = True):
 
     for skill in boss_user.getSkillsGenerator():
         try:
-            assert boss_user.skill(skill, "rank"), "Failed"        
+            assert boss_user.skill(skill, "rank"), "Failed"
+            # Assert that value, when converted to Int, is Int
+            assert type(int(boss_user.skill(skill, "rank"))) == int, "Failed"
             assert boss_user.skill(skill, "level"), "Failed"
+            # Assert that value, when converted to Int, is Int
+            assert type(int(boss_user.skill(skill, "level"))) == int, "Failed"
+            # Assert that value, when converted to Int, is Int
+            assert type(int(boss_user.skill(skill, "experience"))) == int, "Failed"
         except:
             failed_tests.append(skill)
         if (verbose):
