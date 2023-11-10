@@ -387,6 +387,8 @@ class Hiscores(object):
 
         """
         try:
+            # Add support for both British and American spellings of 'defence'
+            if skill == 'defense': skill = 'defence'
             if stype.lower() not in ['rank','level','experience','exp_to_next_level']:
                 raise SkillError("stype must be 'rank','level', or experience'")
             else:
