@@ -388,7 +388,7 @@ class Hiscores(object):
         """
         try:
             if stype.lower() not in ['rank','level','experience','exp_to_next_level']:
-                raise SkillError("stype must be 'rank','level', or experience'")
+                raise SkillError("stype must be 'rank','level', or 'experience'")
             else:
                 return self.stats[self.username][skill.lower()][stype.lower()]
         except KeyError as KE:
