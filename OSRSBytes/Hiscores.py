@@ -183,7 +183,7 @@ class Hiscores(object):
             
         self.__skills = [
                 'attack',
-                'defense',
+                'defence',
                 'strength',
                 'hitpoints',
                 'ranged',
