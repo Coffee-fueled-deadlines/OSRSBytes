@@ -182,6 +182,7 @@ class Hiscores(object):
         subset['total'] = info
             
         self.__skills = [
+                'total',
                 'attack',
                 'defense',
                 'strength',
@@ -353,7 +354,6 @@ class Hiscores(object):
 
         # Prep data for parsing
         self.__parsed_data = self.data.split("\n")
-        self.__parsed_data.pop(0) # remove totals section
 
         self.__parseSkills()
 
