@@ -26,6 +26,7 @@ __maintainer__ = {
 __email__      = 'cookm0803@gmail.com'
 __status__     = 'Open'
 
+
 class Utilities(object):
     def __init__(self):
         self.getLocation()

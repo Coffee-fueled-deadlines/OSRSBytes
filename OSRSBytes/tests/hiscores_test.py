@@ -1,6 +1,7 @@
 from OSRSBytes import Hiscores
 
-def test(verbose = True):
+
+def test(verbose=True):
     pvp_user = Hiscores("C Engineer")
     boss_user = Hiscores("Hess")
     failed_tests = []

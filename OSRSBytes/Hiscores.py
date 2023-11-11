@@ -13,10 +13,6 @@ Changes that involve modifications to player based information should go in the 
 # Generic/Built-in Imports
 import http.client
 import math
-import os
-import time
-
-from OSRSBytes.Utilities import Utilities
 
 # META Data
 __copyright__  = 'Copyright 2023, CFDeadlines'
@@ -31,35 +27,44 @@ __email__      = 'cookm0803@gmail.com'
 __status__     = 'Open'
 __test__ = "this is a test again"
 
+
 ################
 #  Exceptions  #
 ################
 class DoNotRunDirectly(Exception):
     pass
 
+
 class SkillError(Exception):
     pass
+
 
 class ClueError(Exception):
     pass
 
+
 class HiscoresError(Exception):
     pass
+
 
 class LMSArenaError(Exception):
     pass    
 
+
 class BossError(Exception):
     pass
 
+
 class BountyError(Exception):
     pass
+
 
 ############################
 #  Do not run if __main__  #
 ############################
 if __name__ == "__main__":
     raise DoNotRunDirectly("This library is not meant to be called as __main__, import it instead.")
+
 
 ############################
 #  START: Hiscores Object  #
@@ -120,19 +125,19 @@ class Hiscores(object):
         """
         conn = http.client.HTTPSConnection('secure.runescape.com')
         if self.accountType == 'N':
-            conn.request("GET", "/m=hiscore_oldschool/index_lite.ws?player={}".format(self.username.replace(' ','%20')))
+            conn.request("GET", "/m=hiscore_oldschool/index_lite.ws?player={}".format(self.username.replace(' ', '%20')))
             self.response = conn.getresponse()
             self.status = self.response.status
         elif self.accountType == 'IM':
-            conn.request("GET", "/m=hiscore_oldschool_ironman/index_lite.ws?player={}".format(self.username.replace(' ','%20')))
+            conn.request("GET", "/m=hiscore_oldschool_ironman/index_lite.ws?player={}".format(self.username.replace(' ', '%20')))
             self.response = conn.getresponse()
             self.status = self.response.status
         elif self.accountType == "UIM":
-            conn.request("GET", "/m=hiscore_oldschool_ultimate/index_lite.ws?player={}".format(self.username.replace(' ','%20')))
+            conn.request("GET", "/m=hiscore_oldschool_ultimate/index_lite.ws?player={}".format(self.username.replace(' ', '%20')))
             self.response = conn.getresponse()
             self.status = self.response.status
         elif self.accountType == "HIM":
-            conn.request("GET", "/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player={}".format(self.username.replace(' ','%20')))
+            conn.request("GET", "/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player={}".format(self.username.replace(' ', '%20')))
             self.response = conn.getresponse()
             self.status = self.response.status
         self.__processResponse()
@@ -168,19 +173,19 @@ class Hiscores(object):
         subset = {}
         # Totals
         info = {}
-        
+
         # Split data into lists
         for value in self.data.split(" "):
             total_info = value.split(",")
-            
+
             # assign into dictionary
             info['rank'] = total_info[0]
             info['level'] = total_info[1]
             info['experience'] = total_info[2]
             break
-            
+
         subset['total'] = info
-            
+
         self.__skills = [
                 'attack',
                 'defense',
@@ -217,7 +222,7 @@ class Hiscores(object):
 
                 # calculate xp to next level
                 level = info['level'] + 1
-                
+
                 # If 200M XP, set next level and exp to next to 0
                 if (int(info['experience']) == 200000000):
                     info['next_level_exp'] = 0
@@ -225,7 +230,7 @@ class Hiscores(object):
                 else:
                     info['next_level_exp'] = math.floor(sum((math.floor(level + 300 * (2 ** (level / 7.0))) for level in range(1, level)))/4)
                     info['exp_to_next_level'] = int(info['next_level_exp'] - info['experience'])
-                    
+
                 subset[skill] = info
                 self.__parsed_data.remove(item)
                 break
@@ -252,7 +257,6 @@ class Hiscores(object):
                 break
 
         self.bounties[self.username] = subset
-
 
     def __parseClues(self):
         subset = {}
@@ -321,9 +325,8 @@ class Hiscores(object):
         bosses = []
         for boss in boss_list_unsanitized:
             if boss:
-                bosses.append(boss.split("activity-link ",1)[1].split("\">",1)[0])
+                bosses.append(boss.split("activity-link ",1)[1].split("\">", 1)[0])
         return bosses
-
 
     def __parseBosses(self):
         subset = {}
@@ -342,7 +345,6 @@ class Hiscores(object):
 
         self.bosses[self.username] = subset
 
-
     def __parseData(self):
         self.stats = {}
         self.bounties = {}
@@ -353,19 +355,18 @@ class Hiscores(object):
 
         # Prep data for parsing
         self.__parsed_data = self.data.split("\n")
-        self.__parsed_data.pop(0) # remove totals section
+        self.__parsed_data.pop(0)  # Remove totals section
 
         self.__parseSkills()
 
         # Skip over unused values for most people
-        self.__parsed_data.pop(0) # Skip over "unknown" (open issue if you know it)
-        self.__parsed_data.pop(0) # Needed to add another of these for some reason?
+        self.__parsed_data.pop(0)  # Skip over "unknown" (open issue if you know it)
+        self.__parsed_data.pop(0)  # Needed to add another of these for some reason?
 
         self.__parseBountyHunter()
         self.__parseClues()
         self.__parseLMS()
         self.__parseBosses()
-
 
     def skill(self, skill, stype: str = 'level'):
         """skill() method
@@ -387,7 +388,7 @@ class Hiscores(object):
 
         """
         try:
-            if stype.lower() not in ['rank','level','experience','exp_to_next_level']:
+            if stype.lower() not in ['rank','level','experience', 'exp_to_next_level']:
                 raise SkillError("stype must be 'rank','level', or 'experience'")
             else:
                 return self.stats[self.username][skill.lower()][stype.lower()]
@@ -410,7 +411,7 @@ class Hiscores(object):
             self.clues[username][clue_tier][clue_type] (int)
         """
         try:
-            if clue_type.lower() not in ["rank","score"]:
+            if clue_type.lower() not in ["rank", "score"]:
                 raise ClueError("clue_type must be 'rank' or 'score'")
             else:
                 return self.clues[self.username][clue_tier.lower()][clue_type.lower()]
@@ -434,7 +435,7 @@ class Hiscores(object):
             self.bounties[username][bounty_tier][bounty_type] (int)
         """
         try:
-            if bounty_type.lower() not in ["rank","score"]:
+            if bounty_type.lower() not in ["rank", "score"]:
                 raise BountyError("bounty_type must be 'rank' or 'score'")
             else:
                 return self.bounties[self.username][bounty.lower()][bounty_type.lower()]
@@ -443,21 +444,21 @@ class Hiscores(object):
 
     def lms_arena_sw(self, activity_type, info_type: str = 'score'):
         try:
-            if info_type.lower() not in ["rank","score"]:
+            if info_type.lower() not in ["rank", "score"]:
                 raise LMSArenaError("info_type must be 'rank' or 'score'")
             else:
                 return self.lms_arenas_sw[self.username][activity_type.lower()][info_type.lower()]
         except KeyError as KE:
-            raise LMSArenaError("ERROR: activity_type does not exist".format(KE))
+            raise LMSArenaError("ERROR: Activity {} does not exist".format(KE))
 
     def boss(self, boss_name, info_type: str = 'score'):
         try:
-            if info_type.lower() not in ["rank","score"]:
+            if info_type.lower() not in ["rank", "score"]:
                 raise BossError("info_type must be 'rank' or 'score'")
             else:
                 return self.bosses[self.username][boss_name.lower()][info_type.lower()]
         except KeyError as KE:
-            raise BossError("ERROR: boss_name does not exist")
+            raise BossError("ERROR: Boss {} does not exist".format(KE))
 
     def error(self):
         HiscoresError("Error occurred: {}".format(self.errorMsg))
