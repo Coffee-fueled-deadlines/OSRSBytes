@@ -168,20 +168,9 @@ class Hiscores(object):
         subset = {}
         # Totals
         info = {}
-        
-        # Split data into lists
-        for value in self.data.split(" "):
-            total_info = value.split(",")
-            
-            # assign into dictionary
-            info['rank'] = total_info[0]
-            info['level'] = total_info[1]
-            info['experience'] = total_info[2]
-            break
-            
-        subset['total'] = info
-            
+
         self.__skills = [
+                'total',
                 'attack',
                 'defence',
                 'strength',
@@ -353,7 +342,6 @@ class Hiscores(object):
 
         # Prep data for parsing
         self.__parsed_data = self.data.split("\n")
-        self.__parsed_data.pop(0) # remove totals section
 
         self.__parseSkills()
 
