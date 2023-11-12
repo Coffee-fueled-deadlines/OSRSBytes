@@ -1,8 +1,9 @@
 from OSRSBytes import Items
 
-def test(verbose = False):
+
+def test(verbose=False):
     items = Items()
-    test_item = ["rune dagger",1213]
+    test_item = ["rune dagger", 1213]
     failed_list = []
 
     # getItem Method Test
@@ -63,7 +64,7 @@ def test(verbose = False):
             failed_list.append("getBuyQuantity")
     except:
         getBuyQuantity_test = "Failed"
-        failed_list.append("getBuyQuantity")    
+        failed_list.append("getBuyQuantity")
 
     # getSellQuantity Method Test
     try:
@@ -73,7 +74,7 @@ def test(verbose = False):
             failed_list.append("getSellQuantity")
     except:
         getSellQuantity_test = "Failed"
-        failed_list.append("getSellQuantity")    
+        failed_list.append("getSellQuantity")
 
     # getBuyLimit Method Test
     try:
@@ -118,7 +119,7 @@ def test(verbose = False):
     # isMembers Method Test
     try:
         isMembers_test = "Passed"
-        if items.isMembers(test_item[0]) != False:
+        if items.isMembers(test_item[0]) is not False:
             isMembers_test = "Failed"
             failed_list.append("isMembers")
     except:
@@ -129,7 +130,7 @@ def test(verbose = False):
     try:
         update_test = "Passed"
         items.update()
-        items.getName(test_item[1]) # Lets get some info
+        items.getName(test_item[1])  # Lets get some info
     except:
         update_test = "Failed"
         failed_list.append("update")
@@ -150,18 +151,18 @@ def test(verbose = False):
         print("update Test: {}".format(update_test))
 
         # Additional Tests above this comment
-        assert len(failed_list)==0
+        assert len(failed_list) == 0
         print("\nNumber of Failed Tests: {}".format(len(failed_list)))
         if failed_list:
             print("\n\tFailed tests:")
             for fail in failed_list:
                 print("\t\t{}".format(fail))
 
-        if len(failed_list)==0:
+        if len(failed_list) == 0:
             print("Test Passed!")
             return True
         return False
     else:
-        if len(failed_list)==0:
+        if len(failed_list) == 0:
             return True
         return False

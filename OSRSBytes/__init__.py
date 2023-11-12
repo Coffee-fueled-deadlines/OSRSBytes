@@ -24,15 +24,16 @@ __maintainer__ = {
 __email__      = 'cookm0803@gmail.com'
 __status__     = 'Open'
 
+
 ################
 #  Exceptions  #
 ################
 class DoNotRunDirectly(Exception):
     pass
 
+
 ############################
 #  Do not run if __main__  #
 ############################
 if __name__ == "__main__":
     raise DoNotRunDirectly("This library is not meant to be called as __main__, import it instead.")
-

@@ -27,6 +27,7 @@ __maintainer__ = {
 __email__      = 'cookm0803@gmail.com'
 __status__     = 'Open'
 
+
 ################
 #  Exceptions  #
 ################
@@ -38,6 +39,7 @@ class DoNotRunDirectly(Exception):
     """
     pass
 
+
 class ItemNotValid(Exception):
     """ItemNotValid Exception
 
@@ -45,6 +47,7 @@ class ItemNotValid(Exception):
     is not valid or doesn't exist.
     """
     pass
+
 
 class APIDown(Exception):
     """APIDown Exception
@@ -54,11 +57,13 @@ class APIDown(Exception):
     """
     pass
 
+
 ############################
 #  Do not run if __main__  #
 ############################
 if __name__ == "__main__":
     raise DoNotRunDirectly("This library is not meant to be called as __main__, import it instead.")
+
 
 ############################
 #  START: Items Object     #
@@ -78,15 +83,15 @@ class Items(object):
         None
     """
 
-    def __init__(self, application_name = None, application_contact = None):
+    def __init__(self, application_name=None, application_contact=None):
         self.__application_name = application_name if application_name else "OSRSBytes"
         self.__application_contact = application_contact if application_contact else "info@osrsbytes.com"
 
         prices, volumes, mappings = self.__getHTTPRequest()
-        self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings) # Why did I name you this way?
+        self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings)  # Why did I name you this way?
         self.item_dict = self.itemname
         if not (self.item_dict):
-            raise APIDown(f'The API appears to be down, please try the other')
+            raise APIDown('The API appears to be down, please try the other.')
 
     def __getHTTPRequest(self):
         """getHTTPRequest
@@ -105,9 +110,8 @@ class Items(object):
         url_prices = 'https://prices.runescape.wiki/api/v1/osrs/latest'
         url_volumes = 'https://prices.runescape.wiki/api/v1/osrs/volumes'
         headers = {
-            "User-Agent" : "{} - {}".format(self.__application_name, self.__application_contact)
+            "User-Agent": "{} - {}".format(self.__application_name, self.__application_contact)
         }
-
 
         req = urllib.request.Request(url_mappings, headers=headers)
         f = urllib.request.urlopen(req)
@@ -141,7 +145,7 @@ class Items(object):
         rect = {}
         try:
             for item in mappings:
-                item['name'] = item['name'].lower() # Normalize itemnames
+                item['name'] = item['name'].lower()  # Normalize itemnames
                 rect[item['name']] = {}
                 rect[item['name']]['name'] = item['name']
                 rect[item['name']]['id'] = item['id']
@@ -194,7 +198,7 @@ class Items(object):
             return self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]
         except KeyError:
             raise ItemNotValid("{} is not a valid item and was not found.".format(itemNameOrID))
-        
+
     def getName(self, itemNameOrID: str):
         """getName Method
 
@@ -225,7 +229,7 @@ class Items(object):
         """getSellAverage Method
 
         The getSellAverage method, when supplied an Item Name or Item ID, returns an integer value containing
-        the Item's current in-game sell value.      
+        the Item's current in-game sell value.
         """
         return self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['sell_average']
 
@@ -242,9 +246,9 @@ class Items(object):
 
         The getSellQuantity method, when supplied an Item Name or Item ID, returns an integer value containing
         the Item's current number of in-game sell orders.
-        """     
+        """
         return self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['sell_quantity']
-        
+
     def getBuyLimit(self, itemNameOrID: str):
         """getBuyLimit Method
 
@@ -276,7 +280,7 @@ class Items(object):
         """getHighAlchValue Method
 
         The getHighAlchValue method, when supplied an Item Name or Item ID, returns an integer value containing
-        the coin return value of casting High Alchemy on the in-game item.      
+        the coin return value of casting High Alchemy on the in-game item.
         """
         return math.ceil(self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['sp']*.60)
 
@@ -287,18 +291,18 @@ class Items(object):
         on whether the supplied item is Members Only or not.
         """
         return bool(self.item_dict[self.__normalize_input(str(itemNameOrID).lower())]['members'])
-    
+
     def update(self):
         """update Method
-        
+
         The update method updates the item information in the object that it is called from and
         prevents the need to reinitialize/recreate the Items object.
         """
         prices, volumes, mappings = self.__getHTTPRequest()
-        self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings) # Why did I name you this way?
+        self.itemname = self.__rectifyWikiResponse(prices, volumes, mappings)  # Why did I name you this way?
         self.item_dict = self.itemname
         if not (self.item_dict):
-            raise APIDown(f'The API appears to be down, please try the other')
+            raise APIDown('The API appears to be down, please try the other.')
     ##########################
     #  END: Items Object     #
     ##########################
