@@ -19,8 +19,8 @@ def test(verbose=True):
         except:
             failed_tests.append(skill)
         if (verbose):
-            print("Skill: {}\n\tRank: {}\n\tLevel: {}"
-                .format(skill, boss_user.skill(skill,"rank"), boss_user.skill(skill,"level")))
+            print("Skill: {}\n\tRank: {}\n\tLevel: {}\n\tXP: {}"
+                .format(skill, boss_user.skill(skill,"rank"), boss_user.skill(skill,"level"),boss_user.skill(skill,"experience")))
 
     for activity in pvp_user.getPVPGenerator():
         try:

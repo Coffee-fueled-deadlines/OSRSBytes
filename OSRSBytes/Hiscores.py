@@ -188,7 +188,7 @@ class Hiscores(object):
 
         self.__skills = [
                 'attack',
-                'defense',
+                'defence',
                 'strength',
                 'hitpoints',
                 'ranged',
@@ -388,7 +388,9 @@ class Hiscores(object):
 
         """
         try:
-            if stype.lower() not in ['rank','level','experience', 'exp_to_next_level']:
+            # Add support for both British and American spellings of 'defence'
+            if skill == 'defense': skill = 'defence'
+            if stype.lower() not in ['rank', 'level', 'experience', 'exp_to_next_level']:
                 raise SkillError("stype must be 'rank','level', or 'experience'")
             else:
                 return self.stats[self.username][skill.lower()][stype.lower()]
